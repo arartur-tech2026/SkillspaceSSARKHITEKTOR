@@ -50,7 +50,15 @@
       --line-color: #475569;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      -webkit-tap-highlight-color: transparent; 
+      /* Запрет некрасивого разрыва слов */
+      word-break: normal;
+      overflow-wrap: break-word; 
+    }
 
     body {
       font-family: system-ui, -apple-system, sans-serif;
@@ -58,7 +66,7 @@
       color: var(--text-main);
       line-height: 1.4;
       height: 100dvh;
-      width: 100vw;
+      width: 100%; /* Убрано 100vw для фикса горизонтального скролла */
       overflow: hidden;
       display: flex;
       flex-direction: column;
@@ -80,7 +88,7 @@
       padding: 20px;
       text-align: center;
       transition: opacity 0.5s ease, visibility 0.5s ease;
-      overflow: hidden; /* Жесткий запрет скролла */
+      overflow: hidden;
     }
     #splash-screen.hidden { opacity: 0; visibility: hidden; }
     
@@ -96,8 +104,6 @@
       font-weight: 800;
       margin-bottom: min(1rem, 2vh);
       line-height: 1.2;
-      word-break: normal;
-      hyphens: none;
       max-width: 100%;
     }
     .splash-desc {
@@ -153,27 +159,27 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: clamp(8px, 2vh, 15px) clamp(10px, 3vw, 15px);
+      padding: clamp(8px, 2vh, 12px) clamp(10px, 3vw, 15px);
       background-color: var(--bg-surface);
       border-bottom: 1px solid var(--border);
       z-index: 10;
       gap: 5px;
-      flex-wrap: nowrap; /* Жесткий запрет переноса строк */
+      flex-wrap: nowrap; 
     }
     
     .tabs-container {
       display: flex;
       background: var(--bg-bank);
       border-radius: 99px;
-      padding: clamp(2px, 0.5vw, 4px);
+      padding: 4px;
       border: 1px solid var(--border);
       flex-shrink: 1;
-      min-width: 0; /* Позволяет контейнеру сжиматься */
+      min-width: 0; 
     }
     .tab-btn {
-      padding: clamp(4px, 1.5vw, 6px) clamp(8px, 2vw, 14px);
-      font-size: clamp(0.65rem, 2.5vw, 0.85rem);
-      font-weight: 700;
+      padding: clamp(4px, 1.5vw, 6px) clamp(12px, 3vw, 20px); /* Увеличил внутренний отступ для эстетики */
+      font-size: clamp(0.8rem, 3vw, 1rem); /* Чуть крупнее, так как текст короткий */
+      font-weight: 800;
       border-radius: 99px;
       cursor: pointer;
       color: var(--text-muted);
@@ -195,24 +201,24 @@
 
     .header-controls { 
       display: flex; 
-      gap: clamp(4px, 1vw, 6px); 
+      gap: clamp(4px, 1.5vw, 8px); 
       flex-shrink: 0; 
       flex-wrap: nowrap; 
     }
     .btn-icon {
       background: var(--bg-surface); border: 1px solid var(--border); color: var(--text-main);
-      width: clamp(28px, 8vw, 36px); 
-      height: clamp(28px, 8vw, 36px); 
+      width: clamp(30px, 9vw, 36px); 
+      height: clamp(30px, 9vw, 36px); 
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center; cursor: pointer;
       box-shadow: var(--shadow-sm); transition: transform 0.2s;
       flex-shrink: 0;
     }
     .btn-icon:active { transform: scale(0.9); }
-    .btn-icon svg { width: clamp(14px, 4vw, 20px); height: clamp(14px, 4vw, 20px); }
+    .btn-icon svg { width: clamp(16px, 4.5vw, 20px); height: clamp(16px, 4.5vw, 20px); }
     .btn-nav-task { background-color: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
 
-    /* Шкала прогресса - перемещена под шапку */
+    /* Шкала прогресса */
     .progress-bar-container {
       width: 100%;
       height: 4px;
@@ -233,39 +239,47 @@
     /* Инструкция (Онбординг) */
     .instruction-bar {
       background-color: var(--accent-soft); color: var(--accent);
-      padding: 10px 15px; text-align: center; font-size: 0.9rem; font-weight: 600;
+      padding: clamp(6px, 1.5vh, 10px) 15px; 
+      text-align: center; 
+      font-size: clamp(0.75rem, 3vw, 0.9rem); /* Уменьшен размер на смартфонах */
+      font-weight: 600;
       transition: opacity 0.3s ease, max-height 0.3s ease, padding 0.3s ease;
-      max-height: 50px; overflow: hidden; border-bottom: 1px solid var(--border);
+      max-height: 100px; /* Увеличено, чтобы текст точно не обрезался при переносе */
+      overflow: hidden; 
+      border-bottom: 1px solid var(--border);
       flex-shrink: 0;
     }
     .instruction-bar.hidden { max-height: 0; padding-top: 0; padding-bottom: 0; opacity: 0; border: none; }
 
     /* --- РАБОЧАЯ ЗОНА (АРХИТЕКТОР) --- */
     .workspace {
-      flex: 1; overflow-y: auto; padding: 20px 15px; -webkit-overflow-scrolling: touch;
+      flex: 1; overflow-y: auto; padding: 15px; -webkit-overflow-scrolling: touch;
       display: flex; flex-direction: column; align-items: center;
     }
 
     .task-card {
       width: 100%; max-width: 800px; background-color: var(--bg-surface);
-      border-radius: var(--radius-md); padding: 20px; box-shadow: var(--shadow-sm);
-      border: 1px solid var(--border); margin-bottom: 20px;
+      border-radius: var(--radius-md); padding: clamp(15px, 3vh, 20px); box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border); margin-bottom: 15px;
     }
     .task-counter {
-      font-size: 0.8rem; font-weight: 700; color: var(--text-muted);
+      font-size: clamp(0.7rem, 2.5vw, 0.8rem); font-weight: 700; color: var(--text-muted);
       text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;
     }
     .task-type {
       display: inline-block; background-color: var(--accent); color: #fff;
-      padding: 4px 10px; border-radius: 99px; font-size: 0.75rem; font-weight: 800;
+      padding: 4px 10px; border-radius: 99px; font-size: clamp(0.65rem, 2.5vw, 0.75rem); font-weight: 800;
       text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px;
     }
     .task-type.type-20 { background-color: #8b5cf6; } 
-    .task-desc { font-size: 1rem; font-weight: 600; line-height: 1.5; color: var(--text-main); }
+    .task-desc { 
+      font-size: clamp(0.85rem, 3.5vw, 1rem); /* Сделали компактнее для мобилок */
+      font-weight: 600; line-height: 1.4; color: var(--text-main); 
+    }
 
     /* Слоты (Конструктор) */
     .constructor-area {
-      width: 100%; max-width: 800px; display: flex; flex-direction: column; gap: 15px;
+      width: 100%; max-width: 800px; display: flex; flex-direction: column; gap: 12px;
     }
     @media(min-width: 768px) {
       .constructor-area { flex-direction: row; align-items: stretch; justify-content: space-between; }
@@ -277,15 +291,15 @@
     }
     
     .slot-label {
-      font-size: 0.8rem; font-weight: 700; color: var(--text-muted);
-      margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;
+      font-size: clamp(0.7rem, 2.5vw, 0.8rem); font-weight: 700; color: var(--text-muted);
+      margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em;
       text-align: center;
     }
 
     .slot {
       background-color: transparent; border: 2px dashed var(--text-muted);
-      border-radius: var(--radius-md); padding: 15px; font-size: 0.95rem;
-      color: var(--text-muted); min-height: 80px; display: flex;
+      border-radius: var(--radius-md); padding: clamp(10px, 2vh, 15px); font-size: clamp(0.85rem, 3.5vw, 0.95rem);
+      color: var(--text-muted); min-height: clamp(60px, 10vh, 80px); display: flex;
       align-items: center; justify-content: center; text-align: center;
       cursor: pointer; transition: all 0.2s ease; word-break: break-word; flex: 1;
     }
@@ -316,7 +330,7 @@
     /* Подсказки эксперта (ФИПИ ошибки) */
     .fipi-tooltip {
       margin-top: 10px; background-color: var(--error-bg); border-left: 4px solid var(--error);
-      padding: 12px 15px; border-radius: var(--radius-sm); font-size: 0.9rem; color: var(--text-main);
+      padding: 12px 15px; border-radius: var(--radius-sm); font-size: clamp(0.8rem, 3.5vw, 0.9rem); color: var(--text-main);
       display: none; animation: fadeIn 0.3s ease; width: 100%; max-width: 800px;
     }
     .fipi-tooltip.active { display: block; }
@@ -330,11 +344,11 @@
     @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
     /* Кнопка проверки */
-    .check-area { width: 100%; max-width: 800px; text-align: center; margin-top: 25px; display: none; }
+    .check-area { width: 100%; max-width: 800px; text-align: center; margin-top: 20px; display: none; }
     .check-area.active { display: block; animation: fadeIn 0.3s ease; }
     .btn-check {
-      background-color: var(--accent); color: #fff; border: none; padding: 12px 30px;
-      font-size: 1.1rem; font-weight: 700; border-radius: 99px; cursor: pointer;
+      background-color: var(--accent); color: #fff; border: none; padding: clamp(10px, 2vh, 12px) clamp(20px, 6vw, 30px);
+      font-size: clamp(0.95rem, 4vw, 1.1rem); font-weight: 700; border-radius: 99px; cursor: pointer;
       box-shadow: var(--shadow-md); transition: transform 0.2s;
     }
     .btn-check:active { transform: scale(0.95); }
@@ -346,7 +360,7 @@
       display: flex; flex-direction: column; padding-bottom: env(safe-area-inset-bottom, 0); z-index: 20;
     }
     .bank-header {
-      padding: 12px 15px; font-size: 0.85rem; font-weight: 800; text-transform: uppercase;
+      padding: 10px 15px; font-size: clamp(0.75rem, 3vw, 0.85rem); font-weight: 800; text-transform: uppercase;
       letter-spacing: 0.05em; color: var(--text-muted); border-bottom: 1px solid var(--border);
     }
     .bank-items {
@@ -356,7 +370,7 @@
 
     .term-block {
       background-color: var(--bg-surface); border: 1px solid var(--border);
-      padding: 10px 16px; border-radius: var(--radius-sm); font-size: 0.95rem; font-weight: 600;
+      padding: 10px 16px; border-radius: var(--radius-sm); font-size: clamp(0.85rem, 3.5vw, 0.95rem); font-weight: 600;
       color: var(--text-main); cursor: pointer; box-shadow: var(--shadow-sm);
       transition: all 0.2s ease; user-select: none; max-width: 100%; text-align: left;
     }
@@ -390,7 +404,6 @@
 </head>
 <body>
 
-  <!-- ИКОНКИ -->
   <svg style="display: none;" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <symbol id="icon-puzzle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -409,7 +422,6 @@
     </defs>
   </svg>
 
-  <!-- ЗАСТАВКА -->
   <div id="splash-screen">
     <svg class="splash-icon"><use href="#icon-puzzle"></use></svg>
     <h1 class="splash-title">ТРЕНАЖЁР «АРХИТЕКТОР МЫСЛЕЙ»</h1>
@@ -417,13 +429,12 @@
     <button class="btn-start" id="btn-start">Начать конструирование</button>
   </div>
 
-  <!-- ИНТЕРФЕЙС -->
   <div id="app-ui">
     
     <header class="header">
       <div class="tabs-container">
-        <button class="tab-btn active" id="tab-19">19 ЗАДАНИЕ</button>
-        <button class="tab-btn type-20" id="tab-20">20 ЗАДАНИЕ</button>
+        <button class="tab-btn active" id="tab-19">19</button>
+        <button class="tab-btn type-20" id="tab-20">20</button>
       </div>
       <div class="header-controls">
         <button class="btn-icon btn-nav-task" id="btn-prev" title="Предыдущее задание">
@@ -449,7 +460,6 @@
       Нажмите на подходящий блок-пазл внизу, а затем – на нужный слот в схеме.
     </div>
 
-    <!-- РАБОЧАЯ ЗОНА -->
     <main class="workspace" id="workspace">
       
       <div class="task-card">
@@ -459,8 +469,7 @@
       </div>
 
       <div class="constructor-area" id="slots-container">
-        <!-- Слоты генерируются JS -->
-      </div>
+        </div>
       
       <div class="fipi-tooltip" id="fipi-error">
         <strong>ОШИБКА ПО КРИТЕРИЯМ ФИПИ:</strong>
@@ -473,14 +482,12 @@
 
     </main>
 
-    <!-- БАНК ПАЗЛОВ -->
     <div class="bank-panel">
       <div class="bank-header">
         <span>Банк фрагментов (<span id="blocks-left">0</span>)</span>
       </div>
       <div class="bank-items" id="bank-items">
-        <!-- Блоки генерируются JS -->
-      </div>
+        </div>
       <div class="victory-msg" id="victory-msg">
         <svg><use href="#icon-check"></use></svg>
         <h3>Идеальная структура!</h3>
@@ -517,11 +524,11 @@
         slots: [ { id: 's1', label: "Субъект" }, { id: 's2', label: "Действие" }, { id: 's3', label: "Новый статус" } ],
         blocks: [
           { id: 'b1', text: "Студентка Мария из бедной семьи", isCorrect: true, slot: 's1' },
-          { id: 'b2', text: "Молодая девушка из страны Z", isCorrect: false, slot: 's1', error: "В 19 задании пример должен быть индивидуализированным. Обезличенная форма («девушка из страны») делает пример абстрактным." },
+          { id: 'b2', text: "Обычная девушка из страны Z", isCorrect: false, slot: 's1', error: "В 19 задании пример должен быть индивидуализированным. Обезличенная форма («девушка из страны») делает пример абстрактным." },
           { id: 'b3', text: "с отличием окончила престижный медицинский университет", isCorrect: true, slot: 's2' },
-          { id: 'b4', text: "вышла замуж за известного местного миллионера", isCorrect: false, slot: 's2', error: "Это пример канала мобильности «брак/семья», а в задании просили проиллюстрировать канал «образование»." },
+          { id: 'b4', text: "успешно вышла замуж за известного местного миллионера", isCorrect: false, slot: 's2', error: "Это пример канала мобильности «брак/семья», а в задании просили проиллюстрировать канал «образование»." },
           { id: 'b5', text: "после чего была принята на высокооплачиваемую должность главврача.", isCorrect: true, slot: 's3' },
-          { id: 'b6', text: "и навсегда переехала жить в другой крупный город.", isCorrect: false, slot: 's3', error: "Переезд без изменения уровня дохода и власти иллюстрирует горизонтальную мобильность, а нам нужна вертикальная восходящая." }
+          { id: 'b6', text: "и навсегда переехала жить в другой крупный мегаполис.", isCorrect: false, slot: 's3', error: "Переезд без изменения уровня дохода и власти иллюстрирует горизонтальную мобильность, а нам нужна вертикальная восходящая." }
         ]
       },
       {
@@ -543,7 +550,7 @@
         slots: [ { id: 's1', label: "Семья" }, { id: 's2', label: "Действие" }, { id: 's3', label: "Итог" } ],
         blocks: [
           { id: 'b1', text: "Супруги Смирновы", isCorrect: true, slot: 's1' },
-          { id: 'b2', text: "Молодые супруги", isCorrect: false, slot: 's1', error: "ФИПИ требует конкретики. «Молодые супруги» – это социологическая категория, а не смоделированный индивидуальный пример." },
+          { id: 'b2', text: "Типичная молодая семья", isCorrect: false, slot: 's1', error: "ФИПИ требует конкретики. «Типичная молодая семья» – это социологическая категория, а не смоделированный индивидуальный пример." },
           { id: 'b3', text: "приняли осознанное решение завести ребенка", isCorrect: true, slot: 's2' },
           { id: 'b4', text: "открыли совместный семейный продуктовый бизнес", isCorrect: false, slot: 's2', error: "Это действие иллюстрирует экономическую (хозяйственно-бытовую) функцию семьи, а не репродуктивную." },
           { id: 'b5', text: "и у них успешно родилась здоровая двойня.", isCorrect: true, slot: 's3' },
@@ -556,11 +563,11 @@
         slots: [ { id: 's1', label: "Кто?" }, { id: 's2', label: "Что профинансировал?" }, { id: 's3', label: "Эффект" } ],
         blocks: [
           { id: 'b1', text: "Правительство государства Z", isCorrect: true, slot: 's1' },
-          { id: 'b2', text: "Государство в развитой стране", isCorrect: false, slot: 's1', error: "Для примера нужно взять одно конкретное (пусть и смоделированное) государство, а не описывать абстрактную тенденцию «в развитой стране»." },
-          { id: 'b3', text: "профинансировало строительство крупной современной больницы", isCorrect: true, slot: 's2' },
-          { id: 'b4', text: "увеличило размер пенсионных выплат для пожилых граждан", isCorrect: false, slot: 's2', error: "Увеличение пенсий – это мера социальной политики (поддержка населения), а не физическое производство или создание материального общественного блага." },
-          { id: 'b5', text: "в результате чего люди получили доступ к качественной бесплатной медицине.", isCorrect: true, slot: 's3' },
-          { id: 'b6', text: "в результате чего в стране резко вырос уровень массовой безработицы.", isCorrect: false, slot: 's3', error: "Рост безработицы – это негативное макроэкономическое явление, никак логически не связанное с процессом производства общественных благ." }
+          { id: 'b2', text: "Любое современное государство", isCorrect: false, slot: 's1', error: "Для примера нужно взять одно конкретное (пусть и смоделированное) государство, а не описывать абстрактную тенденцию." },
+          { id: 'b3', text: "выделило средства на строительство новой линии метрополитена", isCorrect: true, slot: 's2' },
+          { id: 'b4', text: "повысило базовую ставку налога на прибыль корпораций", isCorrect: false, slot: 's2', error: "Повышение налогов – это фискальная политика, а не физическое производство или финансирование конкретного общественного блага." },
+          { id: 'b5', text: "которой все граждане города могут пользоваться по доступной цене.", isCorrect: true, slot: 's3' },
+          { id: 'b6', text: "что привело к резкому снижению уровня инфляции в стране.", isCorrect: false, slot: 's3', error: "Снижение инфляции – это макроэкономический эффект (антиинфляционная политика), а не признак создания общественного блага." }
         ]
       },
       {
@@ -764,6 +771,32 @@
       }
     ];
 
+    // --- ЛОГИКА ИНТЕРФЕЙСА ---
+    const htmlEl = document.documentElement;
+    const splashScreen = document.getElementById('splash-screen');
+    const appUi = document.getElementById('app-ui');
+    const btnStart = document.getElementById('btn-start');
+    const btnTheme = document.getElementById('btn-theme');
+    const btnFullscreen = document.getElementById('btn-fullscreen');
+    
+    // Вкладки и элементы игры
+    const tab19 = document.getElementById('tab-19');
+    const tab20 = document.getElementById('tab-20');
+    let currentTaskPool = tasks19; // По умолчанию загружаем 19 задание
+    
+    const taskCounter = document.getElementById('task-counter');
+    const taskBadge = document.getElementById('task-badge');
+    const taskDesc = document.getElementById('task-desc');
+    const slotsContainer = document.getElementById('slots-container');
+    const bankItems = document.getElementById('bank-items');
+    const blocksLeftEl = document.getElementById('blocks-left');
+    const checkArea = document.getElementById('check-area');
+    const btnCheck = document.getElementById('btn-check');
+    const fipiErrorBox = document.getElementById('fipi-error');
+    const fipiErrorText = document.getElementById('fipi-error-text');
+    const victoryMsg = document.getElementById('victory-msg');
+    const instructionBar = document.getElementById('instruction-bar');
+
     let currentTaskIndex = 0;
     let bankBlocks = [];
     let selectedBlockId = null;
@@ -801,10 +834,6 @@
     }
 
     // --- ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ---
-    const tab19 = document.getElementById('tab-19');
-    const tab20 = document.getElementById('tab-20');
-    let currentTaskPool = tasks19;
-
     tab19.addEventListener('click', () => {
       if(currentTaskPool === tasks19) return;
       tab19.classList.add('active');
@@ -830,13 +859,12 @@
       const task = currentTaskPool[index];
       const isTask20 = currentTaskPool === tasks20;
       
-      document.getElementById('task-counter').textContent = `КАРТОЧКА ${index + 1} ИЗ ${currentTaskPool.length}`;
-      const taskBadge = document.getElementById('task-badge');
+      taskCounter.textContent = `КАРТОЧКА ${index + 1} ИЗ ${currentTaskPool.length}`;
       taskBadge.textContent = isTask20 ? "ЗАДАНИЕ 20" : "ЗАДАНИЕ 19";
       taskBadge.className = `task-type ${isTask20 ? 'type-20' : ''}`;
-      document.getElementById('task-desc').textContent = task.description;
+      taskDesc.textContent = task.description;
 
-      const slotsContainer = document.getElementById('slots-container');
+      // Отрисовка слотов
       slotsContainer.innerHTML = '';
       task.slots.forEach((slot, i) => {
         const wrapper = document.createElement('div');
@@ -847,6 +875,7 @@
         `;
         slotsContainer.appendChild(wrapper);
 
+        // Стрелка между слотами
         if (i < task.slots.length - 1) {
           const arrow = document.createElement('svg');
           arrow.className = 'arrow-icon';
@@ -855,17 +884,19 @@
         }
       });
 
+      // Подготовка банка (перемешиваем блоки)
       bankBlocks = JSON.parse(JSON.stringify(task.blocks));
       bankBlocks.sort(() => Math.random() - 0.5);
 
       selectedBlockId = null;
       hasInteracted = false;
-      document.getElementById('instruction-bar').classList.remove('hidden');
-      document.getElementById('fipi-error').classList.remove('active');
-      document.getElementById('check-area').classList.remove('active');
-      document.getElementById('victory-msg').style.display = 'none';
-      document.getElementById('bank-items').style.display = 'flex';
+      instructionBar.classList.remove('hidden');
+      fipiErrorBox.classList.remove('active');
+      checkArea.classList.remove('active');
+      victoryMsg.style.display = 'none';
+      bankItems.style.display = 'flex';
 
+      // Сброс шкалы прогресса
       const progressFill = document.getElementById('progress-fill');
       const progress = ((index) / currentTaskPool.length) * 100;
       progressFill.style.width = progress + '%';
@@ -875,9 +906,8 @@
     }
 
     function renderBank() {
-      const bankItems = document.getElementById('bank-items');
       bankItems.innerHTML = '';
-      document.getElementById('blocks-left').textContent = bankBlocks.length;
+      blocksLeftEl.textContent = bankBlocks.length;
 
       bankBlocks.forEach(block => {
         const div = document.createElement('div');
@@ -892,7 +922,7 @@
     function hideOnboarding() {
       if (!hasInteracted) {
         hasInteracted = true;
-        document.getElementById('instruction-bar').classList.add('hidden');
+        instructionBar.classList.add('hidden');
       }
     }
 
@@ -901,6 +931,7 @@
       selectedBlockId = (selectedBlockId === id) ? null : id;
       renderBank();
       
+      // Подсветка пустых слотов
       const slots = document.querySelectorAll('.slot');
       slots.forEach(s => {
         if (s.dataset.filled === "false") {
@@ -912,9 +943,9 @@
     function checkAllFilled() {
       const emptySlots = document.querySelectorAll('.slot[data-filled="false"]');
       if (emptySlots.length === 0) {
-        document.getElementById('check-area').classList.add('active');
+        checkArea.classList.add('active');
       } else {
-        document.getElementById('check-area').classList.remove('active');
+        checkArea.classList.remove('active');
       }
     }
 
@@ -923,8 +954,9 @@
       slots.forEach(slot => {
         slot.addEventListener('click', () => {
           hideOnboarding();
-          document.getElementById('fipi-error').classList.remove('active');
+          fipiErrorBox.classList.remove('active');
 
+          // Возврат блока в банк
           if (slot.dataset.filled === "true") {
             const blockId = slot.dataset.blockId;
             const originalBlock = currentTaskPool[currentTaskIndex].blocks.find(b => b.id === blockId);
@@ -941,6 +973,7 @@
             return;
           }
 
+          // Вставка блока
           if (selectedBlockId === null) return;
 
           const blockObj = bankBlocks.find(b => b.id === selectedBlockId);
@@ -949,6 +982,7 @@
           slot.dataset.blockId = blockObj.id;
           slot.classList.add('filled');
           
+          // Удалить из банка
           bankBlocks = bankBlocks.filter(b => b.id !== selectedBlockId);
           selectedBlockId = null;
           
@@ -961,14 +995,10 @@
     }
 
     // --- ВАЛИДАЦИЯ И ФИПИ-ОШИБКИ ---
-    document.getElementById('btn-check').addEventListener('click', () => {
+    btnCheck.addEventListener('click', () => {
       const task = currentTaskPool[currentTaskIndex];
       const slots = document.querySelectorAll('.slot');
-      const slotsContainer = document.getElementById('slots-container');
-      const fipiErrorBox = document.getElementById('fipi-error');
-      const fipiErrorText = document.getElementById('fipi-error-text');
-      
-      let errorSlots = []; 
+      let errorSlots = []; // Массив для всех слотов с ошибками
       let primaryErrorBlock = null;
 
       slots.forEach((slot) => {
@@ -981,21 +1011,34 @@
       });
 
       if (errorSlots.length > 0) {
-        slots.forEach(s => s.classList.remove('error-anim-primary', 'error-anim-secondary', 'success-anim'));
-        void slotsContainer.offsetWidth; // Trigger reflow
+        // ОШИБКА
+        slots.forEach(s => {
+           s.classList.remove('error-anim-primary', 'error-anim-secondary', 'success-anim');
+        });
+        
+        void slotsContainer.offsetWidth; // Триггер анимации
 
+        // Первый слот с ошибкой делаем главным (красный фон)
         primaryErrorBlock = errorSlots[0].blockObj;
         errorSlots[0].slot.classList.add('error-anim-primary');
 
+        // Остальные слоты с ошибками делаем второстепенными (белый фон, красная рамка)
         for (let i = 1; i < errorSlots.length; i++) {
           errorSlots[i].slot.classList.add('error-anim-secondary');
         }
         
-        fipiErrorText.textContent = primaryErrorBlock.error || "Логическая или грамматическая ошибка в структуре аргумента/примера.";
+        if (primaryErrorBlock.error) {
+          fipiErrorText.textContent = primaryErrorBlock.error;
+        } else {
+          fipiErrorText.textContent = "Логическая или грамматическая ошибка в структуре аргумента/примера.";
+        }
         fipiErrorBox.classList.add('active');
 
+        // Только вибрация, БЕЗ ЗВУКА
         if(navigator.vibrate) navigator.vibrate([50, 100]);
+
       } else {
+        // УСПЕХ
         slots.forEach(s => {
            s.classList.remove('error-anim-primary', 'error-anim-secondary');
            s.classList.add('success-anim');
@@ -1004,10 +1047,11 @@
         if(navigator.vibrate) navigator.vibrate(30);
         
         fipiErrorBox.classList.remove('active');
-        document.getElementById('check-area').classList.remove('active');
-        document.getElementById('bank-items').style.display = 'none';
-        document.getElementById('victory-msg').style.display = 'flex';
+        checkArea.classList.remove('active');
+        bankItems.style.display = 'none';
+        victoryMsg.style.display = 'flex';
 
+        // Обновляем шкалу прогресса по факту успешного прохождения карточки
         const progressFill = document.getElementById('progress-fill');
         const progress = ((currentTaskIndex + 1) / currentTaskPool.length) * 100;
         progressFill.style.width = progress + '%';
@@ -1031,7 +1075,6 @@
     });
 
     // --- СИСТЕМНЫЕ ФУНКЦИИ ---
-    const htmlEl = document.documentElement;
     function requestFullScreenSafe() {
       try {
         if (!document.fullscreenElement && !document.webkitFullscreenElement) {
