@@ -177,8 +177,8 @@
       min-width: 0; 
     }
     .tab-btn {
-      padding: clamp(4px, 1.5vw, 6px) clamp(12px, 3vw, 20px); /* Увеличил внутренний отступ для эстетики */
-      font-size: clamp(0.8rem, 3vw, 1rem); /* Чуть крупнее, так как текст короткий */
+      padding: clamp(4px, 1.5vw, 6px) clamp(12px, 3vw, 20px);
+      font-size: clamp(0.8rem, 3vw, 1rem); 
       font-weight: 800;
       border-radius: 99px;
       cursor: pointer;
@@ -218,7 +218,7 @@
     .btn-icon svg { width: clamp(16px, 4.5vw, 20px); height: clamp(16px, 4.5vw, 20px); }
     .btn-nav-task { background-color: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
 
-    /* Шкала прогресса */
+    /* Шкала прогресса - под шапкой */
     .progress-bar-container {
       width: 100%;
       height: 4px;
@@ -241,10 +241,10 @@
       background-color: var(--accent-soft); color: var(--accent);
       padding: clamp(6px, 1.5vh, 10px) 15px; 
       text-align: center; 
-      font-size: clamp(0.75rem, 3vw, 0.9rem); /* Уменьшен размер на смартфонах */
+      font-size: clamp(0.75rem, 3vw, 0.9rem); 
       font-weight: 600;
       transition: opacity 0.3s ease, max-height 0.3s ease, padding 0.3s ease;
-      max-height: 100px; /* Увеличено, чтобы текст точно не обрезался при переносе */
+      max-height: 100px; 
       overflow: hidden; 
       border-bottom: 1px solid var(--border);
       flex-shrink: 0;
@@ -273,7 +273,7 @@
     }
     .task-type.type-20 { background-color: #8b5cf6; } 
     .task-desc { 
-      font-size: clamp(0.85rem, 3.5vw, 1rem); /* Сделали компактнее для мобилок */
+      font-size: clamp(0.85rem, 3.5vw, 1rem); 
       font-weight: 600; line-height: 1.4; color: var(--text-main); 
     }
 
@@ -404,6 +404,7 @@
 </head>
 <body>
 
+  <!-- ИКОНКИ -->
   <svg style="display: none;" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <symbol id="icon-puzzle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -422,6 +423,7 @@
     </defs>
   </svg>
 
+  <!-- ЗАСТАВКА -->
   <div id="splash-screen">
     <svg class="splash-icon"><use href="#icon-puzzle"></use></svg>
     <h1 class="splash-title">ТРЕНАЖЁР «АРХИТЕКТОР МЫСЛЕЙ»</h1>
@@ -429,12 +431,14 @@
     <button class="btn-start" id="btn-start">Начать конструирование</button>
   </div>
 
+  <!-- ИНТЕРФЕЙС -->
   <div id="app-ui">
     
     <header class="header">
       <div class="tabs-container">
+        <!-- Компактные кнопки вкладок -->
         <button class="tab-btn active" id="tab-19">19</button>
-        <button class="tab-btn type-20" id="tab-20">20</button>
+        <button class="tab-btn type-20" id="tab-20">20 ЗАДАНИЕ</button>
       </div>
       <div class="header-controls">
         <button class="btn-icon btn-nav-task" id="btn-prev" title="Предыдущее задание">
@@ -460,6 +464,7 @@
       Нажмите на подходящий блок-пазл внизу, а затем – на нужный слот в схеме.
     </div>
 
+    <!-- РАБОЧАЯ ЗОНА -->
     <main class="workspace" id="workspace">
       
       <div class="task-card">
@@ -469,7 +474,8 @@
       </div>
 
       <div class="constructor-area" id="slots-container">
-        </div>
+        <!-- Слоты генерируются JS -->
+      </div>
       
       <div class="fipi-tooltip" id="fipi-error">
         <strong>ОШИБКА ПО КРИТЕРИЯМ ФИПИ:</strong>
@@ -482,12 +488,14 @@
 
     </main>
 
+    <!-- БАНК ПАЗЛОВ -->
     <div class="bank-panel">
       <div class="bank-header">
         <span>Банк фрагментов (<span id="blocks-left">0</span>)</span>
       </div>
       <div class="bank-items" id="bank-items">
-        </div>
+        <!-- Блоки генерируются JS -->
+      </div>
       <div class="victory-msg" id="victory-msg">
         <svg><use href="#icon-check"></use></svg>
         <h3>Идеальная структура!</h3>
@@ -563,11 +571,11 @@
         slots: [ { id: 's1', label: "Кто?" }, { id: 's2', label: "Что профинансировал?" }, { id: 's3', label: "Эффект" } ],
         blocks: [
           { id: 'b1', text: "Правительство государства Z", isCorrect: true, slot: 's1' },
-          { id: 'b2', text: "Любое современное государство", isCorrect: false, slot: 's1', error: "Для примера нужно взять одно конкретное (пусть и смоделированное) государство, а не описывать абстрактную тенденцию." },
-          { id: 'b3', text: "выделило средства на строительство новой линии метрополитена", isCorrect: true, slot: 's2' },
-          { id: 'b4', text: "повысило базовую ставку налога на прибыль корпораций", isCorrect: false, slot: 's2', error: "Повышение налогов – это фискальная политика, а не физическое производство или финансирование конкретного общественного блага." },
-          { id: 'b5', text: "которой все граждане города могут пользоваться по доступной цене.", isCorrect: true, slot: 's3' },
-          { id: 'b6', text: "что привело к резкому снижению уровня инфляции в стране.", isCorrect: false, slot: 's3', error: "Снижение инфляции – это макроэкономический эффект (антиинфляционная политика), а не признак создания общественного блага." }
+          { id: 'b2', text: "Государство в развитой стране", isCorrect: false, slot: 's1', error: "Для примера нужно взять одно конкретное (пусть и смоделированное) государство, а не описывать абстрактную тенденцию." },
+          { id: 'b3', text: "профинансировало строительство крупной современной больницы", isCorrect: true, slot: 's2' },
+          { id: 'b4', text: "увеличило размер пенсионных выплат для пожилых граждан", isCorrect: false, slot: 's2', error: "Увеличение пенсий – это мера социальной политики (поддержка населения), а не физическое производство или создание материального общественного блага." },
+          { id: 'b5', text: "в результате чего люди получили доступ к качественной бесплатной медицине.", isCorrect: true, slot: 's3' },
+          { id: 'b6', text: "в результате чего в стране резко вырос уровень массовой безработицы.", isCorrect: false, slot: 's3', error: "Рост безработицы – это негативное макроэкономическое явление, никак логически не связанное с процессом производства общественных благ." }
         ]
       },
       {
@@ -638,6 +646,7 @@
     ];
 
     // --- БАЗА ЗАДАНИЙ 20 (ТЕОРЕТИЧЕСКИЕ АРГУМЕНТЫ) ---
+    // Все дистракторы идеально стыкуются грамматически с правильными блоками
     const tasks20 = [
       {
         id: "20_1",
@@ -771,32 +780,6 @@
       }
     ];
 
-    // --- ЛОГИКА ИНТЕРФЕЙСА ---
-    const htmlEl = document.documentElement;
-    const splashScreen = document.getElementById('splash-screen');
-    const appUi = document.getElementById('app-ui');
-    const btnStart = document.getElementById('btn-start');
-    const btnTheme = document.getElementById('btn-theme');
-    const btnFullscreen = document.getElementById('btn-fullscreen');
-    
-    // Вкладки и элементы игры
-    const tab19 = document.getElementById('tab-19');
-    const tab20 = document.getElementById('tab-20');
-    let currentTaskPool = tasks19; // По умолчанию загружаем 19 задание
-    
-    const taskCounter = document.getElementById('task-counter');
-    const taskBadge = document.getElementById('task-badge');
-    const taskDesc = document.getElementById('task-desc');
-    const slotsContainer = document.getElementById('slots-container');
-    const bankItems = document.getElementById('bank-items');
-    const blocksLeftEl = document.getElementById('blocks-left');
-    const checkArea = document.getElementById('check-area');
-    const btnCheck = document.getElementById('btn-check');
-    const fipiErrorBox = document.getElementById('fipi-error');
-    const fipiErrorText = document.getElementById('fipi-error-text');
-    const victoryMsg = document.getElementById('victory-msg');
-    const instructionBar = document.getElementById('instruction-bar');
-
     let currentTaskIndex = 0;
     let bankBlocks = [];
     let selectedBlockId = null;
@@ -834,6 +817,10 @@
     }
 
     // --- ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ---
+    const tab19 = document.getElementById('tab-19');
+    const tab20 = document.getElementById('tab-20');
+    let currentTaskPool = tasks19;
+
     tab19.addEventListener('click', () => {
       if(currentTaskPool === tasks19) return;
       tab19.classList.add('active');
@@ -859,12 +846,13 @@
       const task = currentTaskPool[index];
       const isTask20 = currentTaskPool === tasks20;
       
-      taskCounter.textContent = `КАРТОЧКА ${index + 1} ИЗ ${currentTaskPool.length}`;
+      document.getElementById('task-counter').textContent = `КАРТОЧКА ${index + 1} ИЗ ${currentTaskPool.length}`;
+      const taskBadge = document.getElementById('task-badge');
       taskBadge.textContent = isTask20 ? "ЗАДАНИЕ 20" : "ЗАДАНИЕ 19";
       taskBadge.className = `task-type ${isTask20 ? 'type-20' : ''}`;
-      taskDesc.textContent = task.description;
+      document.getElementById('task-desc').textContent = task.description;
 
-      // Отрисовка слотов
+      const slotsContainer = document.getElementById('slots-container');
       slotsContainer.innerHTML = '';
       task.slots.forEach((slot, i) => {
         const wrapper = document.createElement('div');
@@ -875,7 +863,6 @@
         `;
         slotsContainer.appendChild(wrapper);
 
-        // Стрелка между слотами
         if (i < task.slots.length - 1) {
           const arrow = document.createElement('svg');
           arrow.className = 'arrow-icon';
@@ -884,19 +871,17 @@
         }
       });
 
-      // Подготовка банка (перемешиваем блоки)
       bankBlocks = JSON.parse(JSON.stringify(task.blocks));
       bankBlocks.sort(() => Math.random() - 0.5);
 
       selectedBlockId = null;
       hasInteracted = false;
-      instructionBar.classList.remove('hidden');
-      fipiErrorBox.classList.remove('active');
-      checkArea.classList.remove('active');
-      victoryMsg.style.display = 'none';
-      bankItems.style.display = 'flex';
+      document.getElementById('instruction-bar').classList.remove('hidden');
+      document.getElementById('fipi-error').classList.remove('active');
+      document.getElementById('check-area').classList.remove('active');
+      document.getElementById('victory-msg').style.display = 'none';
+      document.getElementById('bank-items').style.display = 'flex';
 
-      // Сброс шкалы прогресса
       const progressFill = document.getElementById('progress-fill');
       const progress = ((index) / currentTaskPool.length) * 100;
       progressFill.style.width = progress + '%';
@@ -906,8 +891,9 @@
     }
 
     function renderBank() {
+      const bankItems = document.getElementById('bank-items');
       bankItems.innerHTML = '';
-      blocksLeftEl.textContent = bankBlocks.length;
+      document.getElementById('blocks-left').textContent = bankBlocks.length;
 
       bankBlocks.forEach(block => {
         const div = document.createElement('div');
@@ -922,7 +908,7 @@
     function hideOnboarding() {
       if (!hasInteracted) {
         hasInteracted = true;
-        instructionBar.classList.add('hidden');
+        document.getElementById('instruction-bar').classList.add('hidden');
       }
     }
 
@@ -931,7 +917,6 @@
       selectedBlockId = (selectedBlockId === id) ? null : id;
       renderBank();
       
-      // Подсветка пустых слотов
       const slots = document.querySelectorAll('.slot');
       slots.forEach(s => {
         if (s.dataset.filled === "false") {
@@ -943,9 +928,9 @@
     function checkAllFilled() {
       const emptySlots = document.querySelectorAll('.slot[data-filled="false"]');
       if (emptySlots.length === 0) {
-        checkArea.classList.add('active');
+        document.getElementById('check-area').classList.add('active');
       } else {
-        checkArea.classList.remove('active');
+        document.getElementById('check-area').classList.remove('active');
       }
     }
 
@@ -954,9 +939,8 @@
       slots.forEach(slot => {
         slot.addEventListener('click', () => {
           hideOnboarding();
-          fipiErrorBox.classList.remove('active');
+          document.getElementById('fipi-error').classList.remove('active');
 
-          // Возврат блока в банк
           if (slot.dataset.filled === "true") {
             const blockId = slot.dataset.blockId;
             const originalBlock = currentTaskPool[currentTaskIndex].blocks.find(b => b.id === blockId);
@@ -973,7 +957,6 @@
             return;
           }
 
-          // Вставка блока
           if (selectedBlockId === null) return;
 
           const blockObj = bankBlocks.find(b => b.id === selectedBlockId);
@@ -982,7 +965,6 @@
           slot.dataset.blockId = blockObj.id;
           slot.classList.add('filled');
           
-          // Удалить из банка
           bankBlocks = bankBlocks.filter(b => b.id !== selectedBlockId);
           selectedBlockId = null;
           
@@ -995,10 +977,14 @@
     }
 
     // --- ВАЛИДАЦИЯ И ФИПИ-ОШИБКИ ---
-    btnCheck.addEventListener('click', () => {
+    document.getElementById('btn-check').addEventListener('click', () => {
       const task = currentTaskPool[currentTaskIndex];
       const slots = document.querySelectorAll('.slot');
-      let errorSlots = []; // Массив для всех слотов с ошибками
+      const slotsContainer = document.getElementById('slots-container');
+      const fipiErrorBox = document.getElementById('fipi-error');
+      const fipiErrorText = document.getElementById('fipi-error-text');
+      
+      let errorSlots = []; 
       let primaryErrorBlock = null;
 
       slots.forEach((slot) => {
@@ -1011,34 +997,21 @@
       });
 
       if (errorSlots.length > 0) {
-        // ОШИБКА
-        slots.forEach(s => {
-           s.classList.remove('error-anim-primary', 'error-anim-secondary', 'success-anim');
-        });
-        
-        void slotsContainer.offsetWidth; // Триггер анимации
+        slots.forEach(s => s.classList.remove('error-anim-primary', 'error-anim-secondary', 'success-anim'));
+        void slotsContainer.offsetWidth; // Trigger reflow
 
-        // Первый слот с ошибкой делаем главным (красный фон)
         primaryErrorBlock = errorSlots[0].blockObj;
         errorSlots[0].slot.classList.add('error-anim-primary');
 
-        // Остальные слоты с ошибками делаем второстепенными (белый фон, красная рамка)
         for (let i = 1; i < errorSlots.length; i++) {
           errorSlots[i].slot.classList.add('error-anim-secondary');
         }
         
-        if (primaryErrorBlock.error) {
-          fipiErrorText.textContent = primaryErrorBlock.error;
-        } else {
-          fipiErrorText.textContent = "Логическая или грамматическая ошибка в структуре аргумента/примера.";
-        }
+        fipiErrorText.textContent = primaryErrorBlock.error || "Логическая или грамматическая ошибка в структуре аргумента/примера.";
         fipiErrorBox.classList.add('active');
 
-        // Только вибрация, БЕЗ ЗВУКА
         if(navigator.vibrate) navigator.vibrate([50, 100]);
-
       } else {
-        // УСПЕХ
         slots.forEach(s => {
            s.classList.remove('error-anim-primary', 'error-anim-secondary');
            s.classList.add('success-anim');
@@ -1047,11 +1020,10 @@
         if(navigator.vibrate) navigator.vibrate(30);
         
         fipiErrorBox.classList.remove('active');
-        checkArea.classList.remove('active');
-        bankItems.style.display = 'none';
-        victoryMsg.style.display = 'flex';
+        document.getElementById('check-area').classList.remove('active');
+        document.getElementById('bank-items').style.display = 'none';
+        document.getElementById('victory-msg').style.display = 'flex';
 
-        // Обновляем шкалу прогресса по факту успешного прохождения карточки
         const progressFill = document.getElementById('progress-fill');
         const progress = ((currentTaskIndex + 1) / currentTaskPool.length) * 100;
         progressFill.style.width = progress + '%';
@@ -1075,6 +1047,7 @@
     });
 
     // --- СИСТЕМНЫЕ ФУНКЦИИ ---
+    const htmlEl = document.documentElement;
     function requestFullScreenSafe() {
       try {
         if (!document.fullscreenElement && !document.webkitFullscreenElement) {
