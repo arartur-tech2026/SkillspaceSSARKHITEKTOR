@@ -60,14 +60,15 @@
       overflow-wrap: break-word; 
     }
 
-    body {
+    html, body {
       font-family: system-ui, -apple-system, sans-serif;
       background-color: var(--bg-main);
       color: var(--text-main);
       line-height: 1.4;
       height: 100dvh;
       width: 100%; 
-      overflow: hidden;
+      overflow: hidden; /* Жесткий запрет скролла */
+      overscroll-behavior: none; /* Фикс Scroll-chaining (iOS/iPad) */
       display: flex;
       flex-direction: column;
       transition: background-color 0.3s ease, color 0.3s ease;
@@ -89,6 +90,7 @@
       text-align: center;
       transition: opacity 0.5s ease, visibility 0.5s ease;
       overflow: hidden;
+      overscroll-behavior: none;
     }
     #splash-screen.hidden { opacity: 0; visibility: hidden; }
     
@@ -175,15 +177,14 @@
       border: 1px solid var(--border);
       flex-shrink: 1;
       min-width: 0; 
-      gap: 2px;
+      gap: 4px;
     }
     .tab-btn {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 4px;
-      padding: clamp(4px, 1.5vw, 6px) clamp(10px, 2.5vw, 16px);
-      font-size: clamp(0.85rem, 3.5vw, 1rem); 
+      padding: clamp(6px, 1.5vh, 8px) clamp(16px, 4vw, 24px);
+      font-size: clamp(0.9rem, 3.5vw, 1.1rem); 
       font-weight: 800;
       border-radius: 99px;
       cursor: pointer;
@@ -194,15 +195,6 @@
       user-select: none;
       white-space: nowrap;
       flex-shrink: 1;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 100%;
-    }
-    .tab-label {
-      font-size: 0.65em; /* Динамически уменьшаем слово ЗАДАНИЕ */
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      opacity: 0.9;
     }
     .tab-btn.active {
       background: var(--accent);
@@ -221,18 +213,18 @@
     }
     .btn-icon {
       background: var(--bg-surface); border: 1px solid var(--border); color: var(--text-main);
-      width: clamp(28px, 8vw, 36px); 
-      height: clamp(28px, 8vw, 36px); 
+      width: clamp(30px, 9vw, 36px); 
+      height: clamp(30px, 9vw, 36px); 
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center; cursor: pointer;
       box-shadow: var(--shadow-sm); transition: transform 0.2s;
       flex-shrink: 0;
     }
     .btn-icon:active { transform: scale(0.9); }
-    .btn-icon svg { width: clamp(14px, 4vw, 20px); height: clamp(14px, 4vw, 20px); }
+    .btn-icon svg { width: clamp(16px, 4.5vw, 20px); height: clamp(16px, 4.5vw, 20px); }
     .btn-nav-task { background-color: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
 
-    /* Шкала прогресса */
+    /* Шкала прогресса - под шапкой */
     .progress-bar-container {
       width: 100%;
       height: 4px;
@@ -267,7 +259,9 @@
 
     /* --- РАБОЧАЯ ЗОНА (АРХИТЕКТОР) --- */
     .workspace {
-      flex: 1; overflow-y: auto; padding: 15px; -webkit-overflow-scrolling: touch;
+      flex: 1; overflow-y: auto; padding: 15px; 
+      -webkit-overflow-scrolling: touch; /* Плавный скролл на iOS */
+      overscroll-behavior: contain; /* Изоляция скролла */
       display: flex; flex-direction: column; align-items: center;
     }
 
@@ -379,7 +373,10 @@
     }
     .bank-items {
       flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-wrap: wrap;
-      align-content: flex-start; gap: 10px; -webkit-overflow-scrolling: touch; justify-content: center;
+      align-content: flex-start; gap: 10px; 
+      -webkit-overflow-scrolling: touch; 
+      overscroll-behavior: contain; /* Изоляция скролла */
+      justify-content: center;
     }
 
     .term-block {
@@ -394,13 +391,8 @@
       box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3); transform: translateY(-2px);
     }
     
-    /* Специфичный цвет для блоков в режиме 20 задания */
-    body.theme-20 .term-block.selected { 
-      background-color: #8b5cf6; border-color: #8b5cf6; 
-    }
-    body.theme-20 .slot.filled { 
-      border-color: #8b5cf6; 
-    }
+    body.theme-20 .term-block.selected { background-color: #8b5cf6; border-color: #8b5cf6; }
+    body.theme-20 .slot.filled { border-color: #8b5cf6; }
 
     /* Экран победы */
     .victory-msg {
@@ -418,7 +410,6 @@
 </head>
 <body>
 
-  <!-- ИКОНКИ -->
   <svg style="display: none;" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <symbol id="icon-puzzle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -437,7 +428,6 @@
     </defs>
   </svg>
 
-  <!-- ЗАСТАВКА -->
   <div id="splash-screen">
     <svg class="splash-icon"><use href="#icon-puzzle"></use></svg>
     <h1 class="splash-title">ТРЕНАЖЁР «АРХИТЕКТОР МЫСЛЕЙ»</h1>
@@ -445,13 +435,12 @@
     <button class="btn-start" id="btn-start">Начать конструирование</button>
   </div>
 
-  <!-- ИНТЕРФЕЙС -->
   <div id="app-ui">
     
     <header class="header">
       <div class="tabs-container">
         <button class="tab-btn active" id="tab-19">19</button>
-        <button class="tab-btn type-20" id="tab-20">20 <span class="tab-label">ЗАДАНИЕ</span></button>
+        <button class="tab-btn type-20" id="tab-20">20</button>
       </div>
       <div class="header-controls">
         <button class="btn-icon btn-nav-task" id="btn-prev" title="Предыдущее задание">
@@ -477,7 +466,6 @@
       Нажмите на подходящий блок-пазл внизу, а затем – на нужный слот в схеме.
     </div>
 
-    <!-- РАБОЧАЯ ЗОНА -->
     <main class="workspace" id="workspace">
       
       <div class="task-card">
@@ -487,8 +475,7 @@
       </div>
 
       <div class="constructor-area" id="slots-container">
-        <!-- Слоты генерируются JS -->
-      </div>
+        </div>
       
       <div class="fipi-tooltip" id="fipi-error">
         <strong>ОШИБКА ПО КРИТЕРИЯМ ФИПИ:</strong>
@@ -501,14 +488,12 @@
 
     </main>
 
-    <!-- БАНК ПАЗЛОВ -->
     <div class="bank-panel">
       <div class="bank-header">
         <span>Банк фрагментов (<span id="blocks-left">0</span>)</span>
       </div>
       <div class="bank-items" id="bank-items">
-        <!-- Блоки генерируются JS -->
-      </div>
+        </div>
       <div class="victory-msg" id="victory-msg">
         <svg><use href="#icon-check"></use></svg>
         <h3>Идеальная структура!</h3>
@@ -521,6 +506,17 @@
   </div>
 
   <script>
+    // Фикс для iOS/iPadOS: блокировка скролла родительского окна (scroll-chaining) при свайпах по фону iframe
+    document.addEventListener('touchmove', function(e) {
+      // Разрешаем зум
+      if (e.touches.length > 1) return;
+      // Разрешаем скролл внутри рабочих зон
+      const isScrollable = e.target.closest('.workspace') || e.target.closest('.bank-items');
+      if (!isScrollable) {
+          e.preventDefault();
+      }
+    }, { passive: false });
+
     // Объявление переменной текущей темы
     let currentTheme = 'light';
     
@@ -659,6 +655,7 @@
     ];
 
     // --- БАЗА ЗАДАНИЙ 20 (ТЕОРЕТИЧЕСКИЕ АРГУМЕНТЫ) ---
+    // Все дистракторы идеально стыкуются грамматически с правильными блоками
     const tasks20 = [
       {
         id: "20_1",
