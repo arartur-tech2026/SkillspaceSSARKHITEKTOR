@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Архитектор мыслей – ЕГЭ Обществознание</title>
+  <style>
+    /* --- ПЕРЕМЕННЫЕ И ТЕМЫ --- */
+    :root {
+      --bg-main: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-splash: #ffffff;
+      --bg-bank: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --accent: #2563eb;
+      --accent-soft: #dbeafe;
+      --accent-hover: #1d4ed8;
+      --success: #10b981;
+      --success-bg: #d1fae5;
+      --error: #ef4444;
+      --error-bg: #fee2e2;
+      --border: #e2e8f0;
+      --line-color: #cbd5e1;
+      
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-top: 0 -4px 10px rgba(0, 0, 0, 0.05);
+      
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+    }
+
+    [data-theme="dark"] {
+      --bg-main: #0f172a;
+      --bg-surface: #1e293b;
+      --bg-splash: #0f172a;
+      --bg-bank: #0f172a;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #3b82f6;
+      --accent-soft: rgba(59, 130, 246, 0.2);
+      --accent-hover: #60a5fa;
+      --success: #10b981;
+      --success-bg: rgba(16, 185, 129, 0.15);
+      --error: #ef4444;
+      --error-bg: rgba(239, 68, 68, 0.15);
+      --border: #334155;
+      --line-color: #475569;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      line-height: 1.4;
+      height: 100dvh;
+      width: 100vw;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    svg { width: 1.25rem; height: 1.25rem; fill: currentColor; flex-shrink: 0; }
+
+    /* --- ЗАСТАВКА (SPLASH SCREEN) --- */
+    #splash-screen {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: var(--bg-splash);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 20px;
+      text-align: center;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+      overflow: hidden; /* Жесткий запрет скролла */
+    }
+    #splash-screen.hidden { opacity: 0; visibility: hidden; }
+    
+    .splash-icon {
+      width: min(80px, 12vh);
+      height: min(80px, 12vh);
+      color: var(--accent);
+      margin-bottom: min(1.5rem, 3vh);
+      flex-shrink: 0;
+    }
+    .splash-title {
+      font-size: clamp(1.2rem, 5.5vw, 2.2rem);
+      font-weight: 800;
+      margin-bottom: min(1rem, 2vh);
+      line-height: 1.2;
+      word-break: normal;
+      hyphens: none;
+      max-width: 100%;
+    }
+    .splash-desc {
+      font-size: clamp(0.85rem, 3.5vw, 1.1rem);
+      color: var(--text-muted);
+      margin-bottom: min(2.5rem, 4vh);
+      max-width: 500px;
+      line-height: 1.4;
+      padding: 0 10px;
+    }
+    .btn-start {
+      background-color: var(--accent);
+      color: #ffffff;
+      border: none;
+      padding: min(1rem, 2vh) min(3rem, 6vw);
+      font-size: clamp(0.95rem, 3vw, 1.1rem);
+      font-weight: 700;
+      border-radius: 99px;
+      cursor: pointer;
+      box-shadow: var(--shadow-md);
+      animation: pulse 2s infinite;
+      transition: transform 0.2s ease;
+      flex-shrink: 0;
+    }
+    .btn-start:active { transform: scale(0.95); }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4); }
+      70% { box-shadow: 0 0 0 15px rgba(37, 99, 235, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+    }
+    [data-theme="dark"] .btn-start { animation: pulse-dark 2s infinite; }
+    @keyframes pulse-dark {
+      0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+      70% { box-shadow: 0 0 0 15px rgba(59, 130, 246, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+    }
+
+    /* --- ИНТЕРФЕЙС --- */
+    #app-ui {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.5s ease 0.2s, visibility 0.5s ease 0.2s;
+    }
+    #app-ui.visible { opacity: 1; visibility: visible; }
+
+    /* Шапка с вкладками - СТРОГО В ОДИН РЯД */
+    .header {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: clamp(8px, 2vh, 15px) clamp(10px, 3vw, 15px);
+      background-color: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+      z-index: 10;
+      gap: 5px;
+      flex-wrap: nowrap; /* Жесткий запрет переноса строк */
+    }
+    
+    .tabs-container {
+      display: flex;
+      background: var(--bg-bank);
+      border-radius: 99px;
+      padding: clamp(2px, 0.5vw, 4px);
+      border: 1px solid var(--border);
+      flex-shrink: 1;
+      min-width: 0; /* Позволяет контейнеру сжиматься */
+    }
+    .tab-btn {
+      padding: clamp(4px, 1.5vw, 6px) clamp(8px, 2vw, 14px);
+      font-size: clamp(0.65rem, 2.5vw, 0.85rem);
+      font-weight: 700;
+      border-radius: 99px;
+      cursor: pointer;
+      color: var(--text-muted);
+      border: none;
+      background: transparent;
+      transition: all 0.2s;
+      user-select: none;
+      white-space: nowrap;
+      flex-shrink: 1;
+    }
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: var(--shadow-sm);
+    }
+    .tab-btn.type-20.active {
+      background: #8b5cf6; 
+    }
+
+    .header-controls { 
+      display: flex; 
+      gap: clamp(4px, 1vw, 6px); 
+      flex-shrink: 0; 
+      flex-wrap: nowrap; 
+    }
+    .btn-icon {
+      background: var(--bg-surface); border: 1px solid var(--border); color: var(--text-main);
+      width: clamp(28px, 8vw, 36px); 
+      height: clamp(28px, 8vw, 36px); 
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
+      box-shadow: var(--shadow-sm); transition: transform 0.2s;
+      flex-shrink: 0;
+    }
+    .btn-icon:active { transform: scale(0.9); }
+    .btn-icon svg { width: clamp(14px, 4vw, 20px); height: clamp(14px, 4vw, 20px); }
+    .btn-nav-task { background-color: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+
+    /* Шкала прогресса - перемещена под шапку */
+    .progress-bar-container {
+      width: 100%;
+      height: 4px;
+      background-color: var(--border);
+      flex-shrink: 0;
+      z-index: 20;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background-color: var(--accent);
+      width: 0%;
+      transition: width 0.3s ease-out;
+    }
+    body.theme-20 .progress-bar-fill {
+      background-color: #8b5cf6; 
+    }
+
+    /* Инструкция (Онбординг) */
+    .instruction-bar {
+      background-color: var(--accent-soft); color: var(--accent);
+      padding: 10px 15px; text-align: center; font-size: 0.9rem; font-weight: 600;
+      transition: opacity 0.3s ease, max-height 0.3s ease, padding 0.3s ease;
+      max-height: 50px; overflow: hidden; border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .instruction-bar.hidden { max-height: 0; padding-top: 0; padding-bottom: 0; opacity: 0; border: none; }
+
+    /* --- РАБОЧАЯ ЗОНА (АРХИТЕКТОР) --- */
+    .workspace {
+      flex: 1; overflow-y: auto; padding: 20px 15px; -webkit-overflow-scrolling: touch;
+      display: flex; flex-direction: column; align-items: center;
+    }
+
+    .task-card {
+      width: 100%; max-width: 800px; background-color: var(--bg-surface);
+      border-radius: var(--radius-md); padding: 20px; box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border); margin-bottom: 20px;
+    }
+    .task-counter {
+      font-size: 0.8rem; font-weight: 700; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;
+    }
+    .task-type {
+      display: inline-block; background-color: var(--accent); color: #fff;
+      padding: 4px 10px; border-radius: 99px; font-size: 0.75rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px;
+    }
+    .task-type.type-20 { background-color: #8b5cf6; } 
+    .task-desc { font-size: 1rem; font-weight: 600; line-height: 1.5; color: var(--text-main); }
+
+    /* Слоты (Конструктор) */
+    .constructor-area {
+      width: 100%; max-width: 800px; display: flex; flex-direction: column; gap: 15px;
+    }
+    @media(min-width: 768px) {
+      .constructor-area { flex-direction: row; align-items: stretch; justify-content: space-between; }
+      .slot-wrapper { flex: 1; }
+    }
+
+    .slot-wrapper {
+      position: relative; display: flex; flex-direction: column;
+    }
+    
+    .slot-label {
+      font-size: 0.8rem; font-weight: 700; color: var(--text-muted);
+      margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;
+      text-align: center;
+    }
+
+    .slot {
+      background-color: transparent; border: 2px dashed var(--text-muted);
+      border-radius: var(--radius-md); padding: 15px; font-size: 0.95rem;
+      color: var(--text-muted); min-height: 80px; display: flex;
+      align-items: center; justify-content: center; text-align: center;
+      cursor: pointer; transition: all 0.2s ease; word-break: break-word; flex: 1;
+    }
+    .slot.highlight { border-color: var(--accent); background-color: var(--accent-soft); transform: scale(1.02); }
+    .slot.filled {
+      background-color: var(--bg-surface); border: 2px solid var(--accent);
+      color: var(--text-main); font-weight: 600; box-shadow: var(--shadow-sm);
+    }
+    
+    /* Стили для разделения ошибок: сплошной красный фон для главной, рамка - для остальных */
+    .slot.error-anim-primary { 
+      animation: shake 0.4s ease; background-color: var(--error-bg); border-color: var(--error); color: var(--text-main);
+    }
+    .slot.error-anim-secondary { 
+      animation: shake 0.4s ease; background-color: var(--bg-surface); border-color: var(--error); color: var(--text-main);
+    }
+    
+    .slot.success-anim { background-color: var(--success-bg); border-color: var(--success); color: #064e3b; }
+
+    /* Стрелочки между слотами (только для ПК) */
+    .arrow-icon {
+      display: none; align-self: center; color: var(--line-color); width: 24px; height: 24px;
+    }
+    @media(min-width: 768px) {
+      .arrow-icon { display: block; margin-top: 25px; } 
+    }
+
+    /* Подсказки эксперта (ФИПИ ошибки) */
+    .fipi-tooltip {
+      margin-top: 10px; background-color: var(--error-bg); border-left: 4px solid var(--error);
+      padding: 12px 15px; border-radius: var(--radius-sm); font-size: 0.9rem; color: var(--text-main);
+      display: none; animation: fadeIn 0.3s ease; width: 100%; max-width: 800px;
+    }
+    .fipi-tooltip.active { display: block; }
+    .fipi-tooltip strong { color: var(--error); display: block; margin-bottom: 4px; }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-5px); }
+      40%, 80% { transform: translateX(5px); }
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Кнопка проверки */
+    .check-area { width: 100%; max-width: 800px; text-align: center; margin-top: 25px; display: none; }
+    .check-area.active { display: block; animation: fadeIn 0.3s ease; }
+    .btn-check {
+      background-color: var(--accent); color: #fff; border: none; padding: 12px 30px;
+      font-size: 1.1rem; font-weight: 700; border-radius: 99px; cursor: pointer;
+      box-shadow: var(--shadow-md); transition: transform 0.2s;
+    }
+    .btn-check:active { transform: scale(0.95); }
+
+    /* --- БАНК ПАЗЛОВ (НИЖНЯЯ ПАНЕЛЬ) --- */
+    .bank-panel {
+      flex-shrink: 0; height: 35vh; min-height: 220px; background-color: var(--bg-bank);
+      border-top: 1px solid var(--border); box-shadow: var(--shadow-top);
+      display: flex; flex-direction: column; padding-bottom: env(safe-area-inset-bottom, 0); z-index: 20;
+    }
+    .bank-header {
+      padding: 12px 15px; font-size: 0.85rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.05em; color: var(--text-muted); border-bottom: 1px solid var(--border);
+    }
+    .bank-items {
+      flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-wrap: wrap;
+      align-content: flex-start; gap: 10px; -webkit-overflow-scrolling: touch; justify-content: center;
+    }
+
+    .term-block {
+      background-color: var(--bg-surface); border: 1px solid var(--border);
+      padding: 10px 16px; border-radius: var(--radius-sm); font-size: 0.95rem; font-weight: 600;
+      color: var(--text-main); cursor: pointer; box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease; user-select: none; max-width: 100%; text-align: left;
+    }
+    .term-block:active { transform: scale(0.95); }
+    .term-block.selected {
+      background-color: var(--accent); color: #fff; border-color: var(--accent);
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3); transform: translateY(-2px);
+    }
+    
+    /* Специфичный цвет для блоков в режиме 20 задания */
+    body.theme-20 .term-block.selected { 
+      background-color: #8b5cf6; border-color: #8b5cf6; 
+    }
+    body.theme-20 .slot.filled { 
+      border-color: #8b5cf6; 
+    }
+
+    /* Экран победы */
+    .victory-msg {
+      display: none; flex-direction: column; align-items: center; justify-content: center;
+      height: 100%; text-align: center; color: var(--success); padding: 20px;
+    }
+    .victory-msg svg { width: 48px; height: 48px; margin-bottom: 10px; }
+    .victory-msg h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: 15px; }
+    .btn-next-victory {
+      background-color: var(--success); color: #fff; border: none; padding: 10px 24px;
+      font-size: 1rem; font-weight: 700; border-radius: 99px; cursor: pointer;
+      box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3); display: flex; align-items: center; gap: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ИКОНКИ -->
+  <svg style="display: none;" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <symbol id="icon-puzzle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19.439 7.85c-.049.322-.059.648-.029.975.112 1.28.974 2.27 2.235 2.56a1.53 1.53 0 0 1 .355 2.87c-1.26.29-2.123 1.28-2.235 2.56-.03.327-.02.653.029.975a1.53 1.53 0 0 1-1.879 1.76c-.322-.049-.648-.059-.975-.029-1.28.112-2.27.974-2.56 2.235a1.53 1.53 0 0 1-2.87.355c-.29-1.26-1.28-2.123-2.56-2.235-.327-.03-.653-.02-.975.029a1.53 1.53 0 0 1-1.76-1.879c.049-.322.059-.648.029-.975-1.28-1.112-2.27-1.974-2.56-3.235a1.53 1.53 0 0 1 .355-2.87c1.26-.29 2.123-1.28 2.235-2.56.03-.327.02-.653-.029-.975a1.53 1.53 0 0 1 1.879-1.76c.322.049.648.059.975.029 1.28-.112 2.27-.974 2.56-2.235a1.53 1.53 0 0 1 2.87-.355c.29 1.26 1.28 2.123 2.56 2.235.327.03.653.02.975-.029a1.53 1.53 0 0 1 1.76 1.879Z"></path>
+      </symbol>
+      <symbol id="icon-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline>
+      </symbol>
+      <symbol id="icon-sun" viewBox="0 0 24 24"><path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18.75a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-1.5a.75.75 0 01.75-.75zM6.166 17.834a.75.75 0 00-1.06 1.06l1.59 1.591a.75.75 0 101.06-1.061l-1.59-1.59zM4.5 12a.75.75 0 01-.75.75H1.5a.75.75 0 010-1.5h2.25a.75.75 0 01.75.75zM6.166 6.166a.75.75 0 001.06-1.06l-1.59-1.59a.75.75 0 00-1.061 1.06l1.59 1.59z"/></symbol>
+      <symbol id="icon-moon" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z" clip-rule="evenodd"/></symbol>
+      <symbol id="icon-maximize" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></symbol>
+      <symbol id="icon-minimize" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path></symbol>
+      <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></symbol>
+      <symbol id="icon-forward" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></symbol>
+      <symbol id="icon-backward" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5"></line></symbol>
+    </defs>
+  </svg>
+
+  <!-- ЗАСТАВКА -->
+  <div id="splash-screen">
+    <svg class="splash-icon"><use href="#icon-puzzle"></use></svg>
+    <h1 class="splash-title">ТРЕНАЖЁР «АРХИТЕКТОР МЫСЛЕЙ»</h1>
+    <p class="splash-desc">Задания 19 и 20 ЕГЭ. Собирайте идеальные примеры и аргументы из блоков, не допуская логических ошибок.</p>
+    <button class="btn-start" id="btn-start">Начать конструирование</button>
+  </div>
+
+  <!-- ИНТЕРФЕЙС -->
+  <div id="app-ui">
+    
+    <header class="header">
+      <div class="tabs-container">
+        <button class="tab-btn active" id="tab-19">19 ЗАДАНИЕ</button>
+        <button class="tab-btn type-20" id="tab-20">20 ЗАДАНИЕ</button>
+      </div>
+      <div class="header-controls">
+        <button class="btn-icon btn-nav-task" id="btn-prev" title="Предыдущее задание">
+          <svg><use href="#icon-backward"></use></svg>
+        </button>
+        <button class="btn-icon btn-nav-task" id="btn-skip" title="Следующее задание">
+          <svg><use href="#icon-forward"></use></svg>
+        </button>
+        <button class="btn-icon" id="btn-theme" title="Сменить тему">
+          <svg><use id="icon-theme-use" href="#icon-moon"></use></svg>
+        </button>
+        <button class="btn-icon" id="btn-fullscreen" title="На весь экран" style="background:var(--accent); color:#fff; border-color:var(--accent);">
+          <svg><use id="icon-fullscreen-use" href="#icon-maximize"></use></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="progress-bar-container">
+      <div class="progress-bar-fill" id="progress-fill"></div>
+    </div>
+
+    <div class="instruction-bar" id="instruction-bar">
+      Нажмите на подходящий блок-пазл внизу, а затем – на нужный слот в схеме.
+    </div>
+
+    <!-- РАБОЧАЯ ЗОНА -->
+    <main class="workspace" id="workspace">
+      
+      <div class="task-card">
+        <div id="task-counter" class="task-counter">КАРТОЧКА 1 ИЗ 10</div>
+        <div id="task-badge" class="task-type">ЗАДАНИЕ 19</div>
+        <div id="task-desc" class="task-desc">Опишите функцию...</div>
+      </div>
+
+      <div class="constructor-area" id="slots-container">
+        <!-- Слоты генерируются JS -->
+      </div>
+      
+      <div class="fipi-tooltip" id="fipi-error">
+        <strong>ОШИБКА ПО КРИТЕРИЯМ ФИПИ:</strong>
+        <span id="fipi-error-text">Текст ошибки...</span>
+      </div>
+
+      <div class="check-area" id="check-area">
+        <button class="btn-check" id="btn-check">Проверить ответ</button>
+      </div>
+
+    </main>
+
+    <!-- БАНК ПАЗЛОВ -->
+    <div class="bank-panel">
+      <div class="bank-header">
+        <span>Банк фрагментов (<span id="blocks-left">0</span>)</span>
+      </div>
+      <div class="bank-items" id="bank-items">
+        <!-- Блоки генерируются JS -->
+      </div>
+      <div class="victory-msg" id="victory-msg">
+        <svg><use href="#icon-check"></use></svg>
+        <h3>Идеальная структура!</h3>
+        <button class="btn-next-victory" id="btn-next-victory">
+          Следующее задание <svg><use href="#icon-forward"></use></svg>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Объявление переменной текущей темы
+    let currentTheme = 'light';
+    
+    // --- БАЗА ЗАДАНИЙ 19 (КОНКРЕТНЫЕ ПРИМЕРЫ) ---
+    const tasks19 = [
+      {
+        id: "19_1",
+        description: "Проиллюстрируйте конкретным примером реализацию фискальной функции налогов государством. Соберите структуру: [Субъект] – [Конкретное действие] – [Результат для государства].",
+        slots: [ { id: 's1', label: "Кто?" }, { id: 's2', label: "Что сделал?" }, { id: 's3', label: "Какой итог?" } ],
+        blocks: [
+          { id: 'b1', text: "Гражданин Иванов", isCorrect: true, slot: 's1' },
+          { id: 'b2', text: "Обычный человек", isCorrect: false, slot: 's1', error: "Для 19 задания требуется конкретный субъект (индивид, конкретная фирма или государство), а не абстрактное обобщение «обычный человек»." },
+          { id: 'b3', text: "уплатил транспортный налог за свой автомобиль", isCorrect: true, slot: 's2' },
+          { id: 'b4', text: "купил свежий хлеб в местном супермаркете", isCorrect: false, slot: 's2', error: "Это действие иллюстрирует обычное потребление домохозяйств, а не прямую уплату налогов (фискальную функцию)." },
+          { id: 'b5', text: "что обеспечило поступление денежных средств в региональный бюджет.", isCorrect: true, slot: 's3' },
+          { id: 'b6', text: "и государство профинансировало строительство крупной школы.", isCorrect: false, slot: 's3', error: "Это уже распределительная (социальная) функция бюджета. Суть фискальной функции – именно наполнение (сбор) казны." }
+        ]
+      },
+      {
+        id: "19_2",
+        description: "Проиллюстрируйте работу образования как канала вертикальной восходящей социальной мобильности. Соберите структуру: [Конкретный субъект] – [Действие с институтом] – [Изменение статуса].",
+        slots: [ { id: 's1', label: "Субъект" }, { id: 's2', label: "Действие" }, { id: 's3', label: "Новый статус" } ],
+        blocks: [
+          { id: 'b1', text: "Студентка Мария из бедной семьи", isCorrect: true, slot: 's1' },
+          { id: 'b2', text: "Молодая девушка из страны Z", isCorrect: false, slot: 's1', error: "В 19 задании пример должен быть индивидуализированным. Обезличенная форма («девушка из страны») делает пример абстрактным." },
+          { id: 'b3', text: "с отличием окончила престижный медицинский университет", isCorrect: true, slot: 's2' },
+          { id: 'b4', text: "вышла замуж за известного местного миллионера", isCorrect: false, slot: 's2', error: "Это пример канала мобильности «брак/семья», а в задании просили проиллюстрировать канал «образование»." },
+          { id: 'b5', text: "после чего была принята на высокооплачиваемую должность главврача.", isCorrect: true, slot: 's3' },
+          { id: 'b6', text: "и навсегда переехала жить в другой крупный город.", isCorrect: false, slot: 's3', error: "Переезд без изменения уровня дохода и власти иллюстрирует горизонтальную мобильность, а нам нужна вертикальная восходящая." }
+        ]
+      },
+      {
+        id: "19_3",
+        description: "Проиллюстрируйте применение дисциплинарной юридической ответственности. Соберите структуру: [Субъект] – [Правонарушение] – [Наказание].",
+        slots: [ { id: 's1', label: "Кто?" }, { id: 's2', label: "В чем вина?" }, { id: 's3', label: "Санкция" } ],
+        blocks: [
+          { id: 'b1', text: "Токарь Петров", isCorrect: true, slot: 's1' },
+          { id: 'b2', text: "Обычный работник завода", isCorrect: false, slot: 's1', error: "В 19 задании недопустимы общие рассуждения («обычный работник»). Нужен конкретный, смоделированный нарушитель." },
+          { id: 'b3', text: "опоздал на работу на три часа без уважительной причины", isCorrect: true, slot: 's2' },
+          { id: 'b4', text: "совершил мелкое хищение ценных деталей из цеха", isCorrect: false, slot: 's2', error: "Хищение – это административное или уголовное правонарушение, а опоздание (прогул) – дисциплинарный проступок." },
+          { id: 'b5', text: "за что получил строгий выговор от директора предприятия.", isCorrect: true, slot: 's3' },
+          { id: 'b6', text: "и был оштрафован полицией на пять тысяч рублей.", isCorrect: false, slot: 's3', error: "Штраф назначается государством (полицией/судом) за административные проступки. Работодатель не имеет права штрафовать по ТК РФ." }
+        ]
+      },
+      {
+        id: "19_4",
+        description: "Проиллюстрируйте репродуктивную функцию семьи. Соберите структуру: [Конкретная семья] – [Действие] – [Результат].",
+        slots: [ { id: 's1', label: "Семья" }, { id: 's2', label: "Действие" }, { id: 's3', label: "Итог" } ],
+        blocks: [
+          { id: 'b1', text: "Супруги Смирновы", isCorrect: true, slot: 's1' },
+          { id: 'b2', text: "Молодые супруги", isCorrect: false, slot: 's1', error: "ФИПИ требует конкретики. «Молодые супруги» – это социологическая категория, а не смоделированный индивидуальный пример." },
+          { id: 'b3', text: "приняли осознанное решение завести ребенка", isCorrect: true, slot: 's2' },
+          { id: 'b4', text: "открыли совместный семейный продуктовый бизнес", isCorrect: false, slot: 's2', error: "Это действие иллюстрирует экономическую (хозяйственно-бытовую) функцию семьи, а не репродуктивную." },
+          { id: 'b5', text: "и у них успешно родилась здоровая двойня.", isCorrect: true, slot: 's3' },
+          { id: 'b6', text: "что значительно укрепило их общее финансовое положение.", isCorrect: false, slot: 's3', error: "Рост финансов не относится к репродуктивной функции (биологическому воспроизводству населения)." }
+        ]
+      },
+      {
+        id: "19_5",
+        description: "Проиллюстрируйте участие государства в экономике путем производства общественных благ. Соберите структуру: [Государство] – [Действие] – [Результат для граждан].",
+        slots: [ { id: 's1', label: "Кто?" }, { id: 's2', label: "Что профинансировал?" }, { id: 's3', label: "Эффект" } ],
+        blocks: [
+          { id: 'b1', text: "Правительство государства Z", isCorrect: true, slot: 's1' },
+          { id: 'b2', text: "Государство в развитой стране", isCorrect: false, slot: 's1', error: "Для примера нужно взять одно конкретное (пусть и смоделированное) государство, а не описывать абстрактную тенденцию «в развитой стране»." },
+          { id: 'b3', text: "профинансировало строительство крупной современной больницы", isCorrect: true, slot: 's2' },
+          { id: 'b4', text: "увеличило размер пенсионных выплат для пожилых граждан", isCorrect: false, slot: 's2', error: "Увеличение пенсий – это мера социальной политики (поддержка населения), а не физическое производство или создание материального общественного блага." },
+          { id: 'b5', text: "в результате чего люди получили доступ к качественной бесплатной медицине.", isCorrect: true, slot: 's3' },
+          { id: 'b6', text: "в результате чего в стране резко вырос уровень массовой безработицы.", isCorrect: false, slot: 's3', error: "Рост безработицы – это негативное макроэкономическое явление, никак логически не связанное с процессом производства общественных благ." }
+        ]
+      },
+      {
+        id: "19_6",
+        description: "Проиллюстрируйте прямое политическое участие гражданина в условиях демократии. Соберите структуру: [Гражданин] – [Форма участия] – [Результат].",
+        slots: [ { id: 's1', label: "Субъект" }, { id: 's2', label: "Действие" }, { id: 's3', label: "Итог" } ],
+        blocks: [
+          { id: 'b1', text: "Гражданин Сидоров", isCorrect: true, slot: 's1' },
+          { id: 'b2', text: "Типичный избиратель", isCorrect: false, slot: 's1', error: "Словосочетание «типичный избиратель» делает пример обобщенным. Эксперт ЕГЭ требует показать действие одного конкретного субъекта." },
+          { id: 'b3', text: "в день выборов пришел на свой избирательный участок", isCorrect: true, slot: 's2' },
+          { id: 'b4', text: "написал длинный гневный пост в социальной сети", isCorrect: false, slot: 's2', error: "Пост в соцсети не является официальной, институциональной формой политического участия в выборах." },
+          { id: 'b5', text: "и опустил бюллетень, проголосовав за кандидата от партии «Прогресс».", isCorrect: true, slot: 's3' },
+          { id: 'b6', text: "что значительно повысило уровень его личной правовой грамотности.", isCorrect: false, slot: 's3', error: "Повышение грамотности – это внутренний психологический процесс, а не объективный политический результат участия (отданный голос)." }
+        ]
+      },
+      {
+        id: "19_7",
+        description: "Проиллюстрируйте реализацию имущественных прав в гражданском праве. Соберите структуру: [Гражданин] – [Сделка] – [Правовой итог].",
+        slots: [ { id: 's1', label: "Кто?" }, { id: 's2', label: "Какая сделка?" }, { id: 's3', label: "Результат" } ],
+        blocks: [
+          { id: 'b1', text: "Гражданин А.", isCorrect: true, slot: 's1' },
+          { id: 'b2', text: "Обычный человек", isCorrect: false, slot: 's1', error: "«Обычный человек» – это фраза из бытового рассуждения, она абсолютно недопустима для строгого примера в 19 задании." },
+          { id: 'b3', text: "заключил нотариальный договор купли-продажи квартиры", isCorrect: true, slot: 's2' },
+          { id: 'b4', text: "получил престижную государственную премию за достижения в науке", isCorrect: false, slot: 's2', error: "Государственная премия – это мера поощрения, а не реализация гражданско-правовой имущественной сделки." },
+          { id: 'b5', text: "и после регистрации стал ее полноправным собственником.", isCorrect: true, slot: 's3' },
+          { id: 'b6', text: "и добросовестно заплатил с этой суммы обязательный подоходный налог.", isCorrect: false, slot: 's3', error: "Уплата налога – это административно-финансовая (публичная) обязанность, а не итог гражданско-правовой (частной) сделки." }
+        ]
+      },
+      {
+        id: "19_8",
+        description: "Проиллюстрируйте функцию коммерческого банка по кредитованию бизнеса. Соберите структуру: [Предприниматель] – [Банковская операция] – [Экономический эффект].",
+        slots: [ { id: 's1', label: "Бизнес" }, { id: 's2', label: "Услуга банка" }, { id: 's3', label: "Эффект" } ],
+        blocks: [
+          { id: 'b1', text: "Предприниматель В.", isCorrect: true, slot: 's1' },
+          { id: 'b2', text: "Крупный бизнесмен", isCorrect: false, slot: 's1', error: "Снова абстракция. Нужно взять одну конкретную фирму или одного смоделированного бизнесмена (с инициалом)." },
+          { id: 'b3', text: "оформил целевой кредит в коммерческом банке на закупку новых станков", isCorrect: true, slot: 's2' },
+          { id: 'b4', text: "открыл крупный депозитный счет под очень высокий годовой процент", isCorrect: false, slot: 's2', error: "Депозит – это пассивная операция банка (привлечение средств), а задание требует проиллюстрировать кредитование (активную операцию)." },
+          { id: 'b5', text: "что позволило ему в два раза увеличить объём своего производства.", isCorrect: true, slot: 's3' },
+          { id: 'b6', text: "что обеспечило надежное сохранение его личных сбережений от инфляции.", isCorrect: false, slot: 's3', error: "Сбережение от инфляции – это цель открытия банковского вклада (депозита), а не результат взятия кредита на развитие." }
+        ]
+      },
+      {
+        id: "19_9",
+        description: "Проиллюстрируйте возникновение трудовых правоотношений. Соберите структуру: [Работник] – [Юридическое действие] – [Итог].",
+        slots: [ { id: 's1', label: "Кто?" }, { id: 's2', label: "Что подписал?" }, { id: 's3', label: "Условия" } ],
+        blocks: [
+          { id: 'b1', text: "Выпускник вуза К.", isCorrect: true, slot: 's1' },
+          { id: 'b2', text: "Безработный гражданин", isCorrect: false, slot: 's1', error: "«Безработный гражданин» – слишком общая категория. В 19 задании нужен один конкретный человек." },
+          { id: 'b3', text: "успешно прошел сложное собеседование в крупной IT-компании", isCorrect: true, slot: 's2' },
+          { id: 'b4', text: "подал официальное заявление на получение пособия по безработице", isCorrect: false, slot: 's2', error: "Это взаимодействие с биржей труда (государством), оно не порождает классических трудовых правоотношений с работодателем." },
+          { id: 'b5', text: "и подписал трудовой договор с ежемесячным окладом в 100 тысяч рублей.", isCorrect: true, slot: 's3' },
+          { id: 'b6', text: "и был немедленно официально зарегистрирован инспектором на бирже труда.", isCorrect: false, slot: 's3', error: "Регистрация на бирже дает статус безработного, а задание требует показать начало трудовой деятельности (возникновение правоотношений)." }
+        ]
+      },
+      {
+        id: "19_10",
+        description: "Проиллюстрируйте мировоззренческую функцию науки. Соберите структуру: [Ученый] – [Действие] – [Влияние на мировоззрение].",
+        slots: [ { id: 's1', label: "Кто?" }, { id: 's2', label: "Действие" }, { id: 's3', label: "Результат" } ],
+        blocks: [
+          { id: 'b1', text: "Ученый-астрофизик Н.", isCorrect: true, slot: 's1' },
+          { id: 'b2', text: "Любой современный исследователь", isCorrect: false, slot: 's1', error: "Недопустимы общие рассуждения («любой исследователь»). Нужен конкретный, смоделированный субъект." },
+          { id: 'b3', text: "прочитал масштабную серию научно-популярных лекций о строении Вселенной", isCorrect: true, slot: 's2' },
+          { id: 'b4', text: "изобрел принципиально новый сверхпрочный композитный материал для авиации", isCorrect: false, slot: 's2', error: "Это производственная (практическая) функция науки, а не мировоззренческая." },
+          { id: 'b5', text: "что помогло местным школьникам сформировать рациональную картину мира.", isCorrect: true, slot: 's3' },
+          { id: 'b6', text: "что принесло крупной транснациональной корпорации многомиллионную прибыль.", isCorrect: false, slot: 's3', error: "Коммерческая прибыль – это экономический эффект, который никак не связан с формированием картины мира в умах людей." }
+        ]
+      }
+    ];
+
+    // --- БАЗА ЗАДАНИЙ 20 (ТЕОРЕТИЧЕСКИЕ АРГУМЕНТЫ) ---
+    const tasks20 = [
+      {
+        id: "20_1",
+        description: "Сформулируйте теоретический аргумент о необходимости государства производить общественные блага. [Тезис/Проблема] – [Действие государства] – [Вывод].",
+        slots: [ { id: 's1', label: "Проблема рынка" }, { id: 's2', label: "Вмешательство" }, { id: 's3', label: "Вывод" } ],
+        blocks: [
+          { id: 'b1', text: "Рыночный механизм объективно не способен создавать общественные блага,", isCorrect: true, slot: 's1' },
+          { id: 'b2', text: "Крупный частный бизнес часто отказывается создавать общественные блага,", isCorrect: false, slot: 's1', error: "Ошибка! В 20 задании категорически запрещено использовать конкретные или частные примеры бизнеса. Требуются строгие теоретические обобщения." },
+          { id: 'b3', text: "поэтому государство вынуждено самостоятельно организовывать и финансировать их производство,", isCorrect: true, slot: 's2' },
+          { id: 'b4', text: "поэтому Президент страны издает специальный финансирующий указ,", isCorrect: false, slot: 's2', error: "Использование конкретных юридических фактов (указ Президента) превращает аргумент в пример (формат 19 задания)." },
+          { id: 'b5', text: "гарантированно обеспечивая общество бесплатной медициной, армией и правопорядком.", isCorrect: true, slot: 's3' },
+          { id: 'b6', text: "гарантируя быструю постройку конкретной городской больницы номер 5.", isCorrect: false, slot: 's3', error: "Слишком мелко и конкретно. Аргумент должен завершаться широким теоретическим выводом для всего общества." }
+        ]
+      },
+      {
+        id: "20_2",
+        description: "Обоснуйте теоретически значимость принципа разделения властей в демократии. [Тезис] – [Механизм] – [Итог].",
+        slots: [ { id: 's1', label: "Угроза" }, { id: 's2', label: "Механизм" }, { id: 's3', label: "Защита" } ],
+        blocks: [
+          { id: 'b1', text: "В демократическом государстве необходимо предотвратить узурпацию власти одним лицом,", isCorrect: true, slot: 's1' },
+          { id: 'b2', text: "В государстве Н. президент попытался незаконно захватить всю полноту власти,", isCorrect: false, slot: 's1', error: "В 20 задании нельзя моделировать ситуации (государство Н., президент). Нужна только академическая теория." },
+          { id: 'b3', text: "для этого вводится строгий политический принцип разделения властей,", isCorrect: true, slot: 's2' },
+          { id: 'b4', text: "для чего возмущенные граждане массово выходят на уличные митинги,", isCorrect: false, slot: 's2', error: "Митинги – это стихийная реакция общества, а не системный конституционный принцип организации власти." },
+          { id: 'b5', text: "что гарантирует устойчивую систему сдержек и противовесов и защиту прав граждан.", isCorrect: true, slot: 's3' },
+          { id: 'b6', text: "в результате чего мэр столицы немедленно уходит в досрочную отставку.", isCorrect: false, slot: 's3', error: "Отставка мэра – это мелкий конкретный факт, не подходящий для глобального теоретического вывода о сути демократии." }
+        ]
+      },
+      {
+        id: "20_3",
+        description: "Обоснуйте роль семьи как агента первичной социализации. [Тезис] – [Механизм] – [Итог].",
+        slots: [ { id: 's1', label: "Тезис" }, { id: 's2', label: "Процесс" }, { id: 's3', label: "Вывод" } ],
+        blocks: [
+          { id: 'b1', text: "Семья является важнейшим институтом и агентом первичной социализации индивида,", isCorrect: true, slot: 's1' },
+          { id: 'b2', text: "Заботливая мать успешно научила своего маленького сына правильно читать и писать,", isCorrect: false, slot: 's1', error: "«Сын и мать» – это конкретный жизненный пример для 19 задания. В 20 задании пишем теорию: «Семья является...»." },
+          { id: 'b3', text: "поскольку именно в ней ребенок глубоко усваивает базовые моральные нормы и ценности,", isCorrect: true, slot: 's2' },
+          { id: 'b4', text: "поскольку обеспеченные родители отдают своего ребенка в элитную платную школу,", isCorrect: false, slot: 's2', error: "Платная школа – это уже другой агент (институт) вторичной социализации, а не внутренний семейный процесс." },
+          { id: 'b5', text: "что формирует прочный фундамент его личности для дальнейшей жизни в обществе.", isCorrect: true, slot: 's3' },
+          { id: 'b6', text: "в результате чего он крайне успешно сдает все государственные экзамены на 100 баллов.", isCorrect: false, slot: 's3', error: "Сдача экзаменов – это конкретный, узкий результат, не отражающий теоретическую суть первичной социализации личности." }
+        ]
+      },
+      {
+        id: "20_4",
+        description: "Обоснуйте разрушительное влияние высокой инфляции на общество. [Тезис] – [Процесс] – [Социальный итог].",
+        slots: [ { id: 's1', label: "Тезис" }, { id: 's2', label: "Экономика" }, { id: 's3', label: "Социум" } ],
+        blocks: [
+          { id: 'b1', text: "Высокие темпы инфляции крайне разрушительно влияют на экономику любого государства,", isCorrect: true, slot: 's1' },
+          { id: 'b2', text: "Инфляция в развивающейся стране Z достигла критических 20% за прошедший год,", isCorrect: false, slot: 's1', error: "Приведение конкретных цифр (20%) и названий стран (Z) превращает теоретический аргумент в фактологический пример." },
+          { id: 'b3', text: "так как они приводят к быстрому обесцениванию сбережений и падению реальных доходов населения,", isCorrect: true, slot: 's2' },
+          { id: 'b4', text: "так как Центральный банк экстренно и жестко повышает ключевую ставку до 15%,", isCorrect: false, slot: 's2', error: "Повышение ставки ЦБ – это метод *борьбы* с инфляцией, а не механизм ее разрушительного воздействия на доходы." },
+          { id: 'b5', text: "катастрофически снижая общий уровень жизни и покупательную способность большинства граждан.", isCorrect: true, slot: 's3' },
+          { id: 'b6', text: "из-за чего гражданин А. так и не может позволить себе купить новый импортный автомобиль.", isCorrect: false, slot: 's3', error: "«Гражданин А.» – это недопустимая конкретика для 20 задания." }
+        ]
+      },
+      {
+        id: "20_5",
+        description: "Обоснуйте теоретически регулятивную функцию права в обществе. [Тезис] – [Действие права] – [Итог].",
+        slots: [ { id: 's1', label: "Тезис" }, { id: 's2', label: "Механизм" }, { id: 's3', label: "Итог для общества" } ],
+        blocks: [
+          { id: 'b1', text: "Право выполняет важнейшую регулятивную функцию в любом современном социуме,", isCorrect: true, slot: 's1' },
+          { id: 'b2', text: "Пьяный водитель вчера грубо нарушил установленные правила дорожного движения,", isCorrect: false, slot: 's1', error: "Это описание конкретного правонарушения (пример), а не теоретическое утверждение о функции права." },
+          { id: 'b3', text: "объективно устанавливая четкие, формализованные и общеобязательные правила поведения для всех субъектов,", isCorrect: true, slot: 's2' },
+          { id: 'b4', text: "регулярно выписывая легкомысленным гражданам крупные административные штрафы за нарушение общественного порядка,", isCorrect: false, slot: 's2', error: "Штрафы – это охранительная (карательная) функция права, а нам нужно описать регулятивную (установление правил игры)." },
+          { id: 'b5', text: "что вносит необходимую стабильность, порядок и предсказуемость в сложные общественные отношения.", isCorrect: true, slot: 's3' },
+          { id: 'b6', text: "в результате чего опасный преступник совершенно справедливо отправляется отбывать срок в тюрьму.", isCorrect: false, slot: 's3', error: "Посадка в тюрьму – это конкретный результат охранительной функции (наказание), а не общая стабилизация социума." }
+        ]
+      },
+      {
+        id: "20_6",
+        description: "Обоснуйте роль социального контроля в поддержании стабильности. [Тезис] – [Процесс] – [Результат].",
+        slots: [ { id: 's1', label: "Тезис" }, { id: 's2', label: "Процесс" }, { id: 's3', label: "Результат" } ],
+        blocks: [
+          { id: 'b1', text: "Социальный контроль критически необходим для поддержания стабильности социальной системы,", isCorrect: true, slot: 's1' },
+          { id: 'b2', text: "Бдительный полицейский вчера вечером задержал уличного хулигана за очень громкий крик,", isCorrect: false, slot: 's1', error: "Это конкретный пример формального внешнего контроля. В 20 задании нужна теория, а не описание работы полицейского." },
+          { id: 'b3', text: "поскольку он обеспечивает жесткое соблюдение индивидами установленных социальных норм,", isCorrect: true, slot: 's2' },
+          { id: 'b4', text: "поскольку государство ежегодно выделяет колоссальные финансовые средства на содержание регулярной армии,", isCorrect: false, slot: 's2', error: "Армия защищает от внешних угроз. Социальный контроль направлен на внутреннее соблюдение норм гражданами." },
+          { id: 'b5', text: "надежно предотвращая социальный хаос и массовое девиантное поведение в обществе.", isCorrect: true, slot: 's3' },
+          { id: 'b6', text: "что помогает одной конкретной частной фирме чудесным образом избежать полного банкротства.", isCorrect: false, slot: 's3', error: "Избежание банкротства фирмы – это экономический итог, никак не связанный с социологическим понятием девиантного поведения." }
+        ]
+      },
+      {
+        id: "20_7",
+        description: "Обоснуйте роль политических партий как института представительства. [Тезис] – [Действие] – [Политический итог].",
+        slots: [ { id: 's1', label: "Тезис" }, { id: 's2', label: "Аккумуляция" }, { id: 's3', label: "Трансляция" } ],
+        blocks: [
+          { id: 'b1', text: "Политические партии выступают ключевым связующим звеном между обществом и государственным аппаратом,", isCorrect: true, slot: 's1' },
+          { id: 'b2', text: "Партия «Прогресс» триумфально выиграла недавние политические выборы в региональный парламент,", isCorrect: false, slot: 's1', error: "Упоминание конкретной партии и выборов делает это предложение примером (19 задание), а не теоретическим аргументом." },
+          { id: 'b3', text: "активно выражая и аккумулируя политические интересы различных социальных групп и больших классов,", isCorrect: true, slot: 's2' },
+          { id: 'b4', text: "массово выдавая бесплатные продуктовые наборы самым бедным слоям населения перед каждыми выборами,", isCorrect: false, slot: 's2', error: "Раздача продуктов – это частная политтехнология (иногда незаконная), а не институциональная функция политической партии." },
+          { id: 'b5', text: "и легально транслируя эти масштабные интересы на высший уровень принятия государственных решений.", isCorrect: true, slot: 's3' },
+          { id: 'b6', text: "и в итоге лидер этой невероятно популярной партии становится новым премьер-министром страны.", isCorrect: false, slot: 's3', error: "Снова уход в конкретику. Вывод должен быть обобщенным (трансляция интересов во власть)." }
+        ]
+      },
+      {
+        id: "20_8",
+        description: "Обоснуйте значимость свободной конкуренции для рыночной экономики. [Тезис] – [Механизм] – [Экономический итог].",
+        slots: [ { id: 's1', label: "Тезис" }, { id: 's2', label: "Стимул" }, { id: 's3', label: "Итог" } ],
+        blocks: [
+          { id: 'b1', text: "Свободная конкуренция является самым главным естественным двигателем рыночной экономики,", isCorrect: true, slot: 's1' },
+          { id: 'b2', text: "Крупная компания «Альфа» полностью и безоговорочно обошла всех своих конкурентов на рынке смартфонов,", isCorrect: false, slot: 's1', error: "Название компании («Альфа») и конкретный рынок смартфонов – это фактология для 19 задания, а не теория для 20." },
+          { id: 'b3', text: "так как она неумолимо заставляет независимых производителей снижать издержки и постоянно улучшать качество продукции,", isCorrect: true, slot: 's2' },
+          { id: 'b4', text: "так как государство всегда крайне жестко фиксирует максимальные цены на все социально значимые товары,", isCorrect: false, slot: 's2', error: "Жесткая фиксация цен государством убивает свободную конкуренцию, это признак плановой (командной), а не рыночной экономики." },
+          { id: 'b5', text: "что в конечном счете приводит к максимально эффективному и рациональному распределению ограниченных ресурсов.", isCorrect: true, slot: 's3' },
+          { id: 'b6', text: "в результате чего огромная годовая прибыль одного конкретного частного завода мгновенно вырастает в три раза.", isCorrect: false, slot: 's3', error: "Рост прибыли одного завода не отражает макроэкономическую суть конкуренции (распределение ресурсов для всего общества)." }
+        ]
+      },
+      {
+        id: "20_9",
+        description: "Обоснуйте теоретически специфику и социальную роль массовой культуры. [Тезис] – [Форма] – [Цель].",
+        slots: [ { id: 's1', label: "Тезис" }, { id: 's2', label: "Методы" }, { id: 's3', label: "Функция" } ],
+        blocks: [
+          { id: 'b1', text: "Массовая культура строго ориентирована на быстрый коммерческий успех и максимально широкую аудиторию,", isCorrect: true, slot: 's1' },
+          { id: 'b2', text: "Новый голливудский фильм-блокбастер легко собрал в мировом кинопрокате более одного миллиарда долларов,", isCorrect: false, slot: 's1', error: "Фильм-блокбастер и конкретные суммы сборов – это классический пример. Аргумент должен формулироваться обобщенно." },
+          { id: 'b3', text: "поэтому она намеренно использует максимально простые, понятные и стандартизированные сюжеты и образы,", isCorrect: true, slot: 's2' },
+          { id: 'b4', text: "поэтому она использует исключительно сложный философский язык и невероятно глубокие, скрытые метафоры,", isCorrect: false, slot: 's2', error: "Сложный язык и скрытые метафоры – это отличительные признаки элитарной (авангардной) культуры, а не массовой." },
+          { id: 'b5', text: "чтобы гарантированно обеспечить легкое восприятие и удовлетворить потребность большинства обычных людей в развлекательном досуге.", isCorrect: true, slot: 's3' },
+          { id: 'b6', text: "чтобы уставший после тяжелой рабочей смены рядовой зритель А. смог легко расслабиться перед домашним телевизором.", isCorrect: false, slot: 's3', error: "Упоминание «зрителя А.» нарушает правило 20 задания: нельзя использовать смоделированных персонажей." }
+        ]
+      },
+      {
+        id: "20_10",
+        description: "Обоснуйте роль налогов в финансовой системе государства. [Тезис] – [Функция] – [Итог].",
+        slots: [ { id: 's1', label: "Тезис" }, { id: 's2', label: "Функция" }, { id: 's3', label: "Распределение" } ],
+        blocks: [
+          { id: 'b1', text: "Налоги объективно являются главным и самым стабильным источником доходов любого государственного бюджета,", isCorrect: true, slot: 's1' },
+          { id: 'b2', text: "Известная частная фирма «Ромашка» вовремя уплатила налог на прибыль в размере одного миллиона рублей,", isCorrect: false, slot: 's1', error: "Название фирмы и сумма налога – это факты для иллюстрации (19 задание), а нам нужен теоретический тезис." },
+          { id: 'b3', text: "надежно и гарантированно обеспечивая современное государство колоссальными и жизненно необходимыми финансовыми ресурсами,", isCorrect: true, slot: 's2' },
+          { id: 'b4', text: "искусственно и целенаправленно ограничивая массовую покупку таких вредных товаров, как крепкий алкоголь и табак,", isCorrect: false, slot: 's2', error: "Это описание регулирующей (акцизной) функции, а тезис был о том, что налоги – источник доходов бюджета (фискальная функция)." },
+          { id: 'b5', text: "что позволяет государственным властям бесперебойно финансировать дорогостоящую социальную политику и оборону страны.", isCorrect: true, slot: 's3' },
+          { id: 'b6', text: "что позволяет мэру небольшого провинциального города наконец-то построить долгожданный новый автомобильный мост через реку.", isCorrect: false, slot: 's3', error: "Постройка одного моста – это мелкая конкретика, не подходящая для масштабного теоретического вывода." }
+        ]
+      }
+    ];
+
+    let currentTaskIndex = 0;
+    let bankBlocks = [];
+    let selectedBlockId = null;
+    let audioCtx = null;
+    let hasInteracted = false;
+
+    // Звук (только для успеха)
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) audioCtx = new AudioContext();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function playSuccessSound() {
+      if (!audioCtx) return;
+      try {
+        const playBell = (freq, delay) => {
+          const osc = audioCtx.createOscillator();
+          const gainNode = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.value = freq;
+          gainNode.gain.setValueAtTime(0, audioCtx.currentTime + delay);
+          gainNode.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + delay + 0.02);
+          gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + delay + 0.6);
+          osc.connect(gainNode);
+          gainNode.connect(audioCtx.destination);
+          osc.start(audioCtx.currentTime + delay);
+          osc.stop(audioCtx.currentTime + delay + 0.6);
+        };
+        playBell(1046.50, 0); // C6
+        playBell(1318.51, 0.1); // E6
+      } catch(e) { console.warn("Audio error", e); }
+    }
+
+    // --- ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ---
+    const tab19 = document.getElementById('tab-19');
+    const tab20 = document.getElementById('tab-20');
+    let currentTaskPool = tasks19;
+
+    tab19.addEventListener('click', () => {
+      if(currentTaskPool === tasks19) return;
+      tab19.classList.add('active');
+      tab20.classList.remove('active');
+      document.body.classList.remove('theme-20');
+      currentTaskPool = tasks19;
+      currentTaskIndex = 0;
+      loadTask(currentTaskIndex);
+    });
+
+    tab20.addEventListener('click', () => {
+      if(currentTaskPool === tasks20) return;
+      tab20.classList.add('active');
+      tab19.classList.remove('active');
+      document.body.classList.add('theme-20');
+      currentTaskPool = tasks20;
+      currentTaskIndex = 0;
+      loadTask(currentTaskIndex);
+    });
+
+    // --- ГЕНЕРАЦИЯ ЗАДАНИЯ ---
+    function loadTask(index) {
+      const task = currentTaskPool[index];
+      const isTask20 = currentTaskPool === tasks20;
+      
+      document.getElementById('task-counter').textContent = `КАРТОЧКА ${index + 1} ИЗ ${currentTaskPool.length}`;
+      const taskBadge = document.getElementById('task-badge');
+      taskBadge.textContent = isTask20 ? "ЗАДАНИЕ 20" : "ЗАДАНИЕ 19";
+      taskBadge.className = `task-type ${isTask20 ? 'type-20' : ''}`;
+      document.getElementById('task-desc').textContent = task.description;
+
+      const slotsContainer = document.getElementById('slots-container');
+      slotsContainer.innerHTML = '';
+      task.slots.forEach((slot, i) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'slot-wrapper';
+        wrapper.innerHTML = `
+          <div class="slot-label">${slot.label}</div>
+          <div class="slot" data-slot-id="${slot.id}" data-filled="false">Пусто</div>
+        `;
+        slotsContainer.appendChild(wrapper);
+
+        if (i < task.slots.length - 1) {
+          const arrow = document.createElement('svg');
+          arrow.className = 'arrow-icon';
+          arrow.innerHTML = '<use href="#icon-arrow"></use>';
+          slotsContainer.appendChild(arrow);
+        }
+      });
+
+      bankBlocks = JSON.parse(JSON.stringify(task.blocks));
+      bankBlocks.sort(() => Math.random() - 0.5);
+
+      selectedBlockId = null;
+      hasInteracted = false;
+      document.getElementById('instruction-bar').classList.remove('hidden');
+      document.getElementById('fipi-error').classList.remove('active');
+      document.getElementById('check-area').classList.remove('active');
+      document.getElementById('victory-msg').style.display = 'none';
+      document.getElementById('bank-items').style.display = 'flex';
+
+      const progressFill = document.getElementById('progress-fill');
+      const progress = ((index) / currentTaskPool.length) * 100;
+      progressFill.style.width = progress + '%';
+
+      renderBank();
+      bindSlotEvents();
+    }
+
+    function renderBank() {
+      const bankItems = document.getElementById('bank-items');
+      bankItems.innerHTML = '';
+      document.getElementById('blocks-left').textContent = bankBlocks.length;
+
+      bankBlocks.forEach(block => {
+        const div = document.createElement('div');
+        div.className = `term-block ${selectedBlockId === block.id ? 'selected' : ''}`;
+        div.textContent = block.text;
+        div.dataset.id = block.id;
+        div.addEventListener('click', () => selectBlock(block.id));
+        bankItems.appendChild(div);
+      });
+    }
+
+    function hideOnboarding() {
+      if (!hasInteracted) {
+        hasInteracted = true;
+        document.getElementById('instruction-bar').classList.add('hidden');
+      }
+    }
+
+    function selectBlock(id) {
+      hideOnboarding();
+      selectedBlockId = (selectedBlockId === id) ? null : id;
+      renderBank();
+      
+      const slots = document.querySelectorAll('.slot');
+      slots.forEach(s => {
+        if (s.dataset.filled === "false") {
+          s.classList.toggle('highlight', selectedBlockId !== null);
+        }
+      });
+    }
+
+    function checkAllFilled() {
+      const emptySlots = document.querySelectorAll('.slot[data-filled="false"]');
+      if (emptySlots.length === 0) {
+        document.getElementById('check-area').classList.add('active');
+      } else {
+        document.getElementById('check-area').classList.remove('active');
+      }
+    }
+
+    function bindSlotEvents() {
+      const slots = document.querySelectorAll('.slot');
+      slots.forEach(slot => {
+        slot.addEventListener('click', () => {
+          hideOnboarding();
+          document.getElementById('fipi-error').classList.remove('active');
+
+          if (slot.dataset.filled === "true") {
+            const blockId = slot.dataset.blockId;
+            const originalBlock = currentTaskPool[currentTaskIndex].blocks.find(b => b.id === blockId);
+            bankBlocks.push(originalBlock);
+            
+            slot.dataset.filled = "false";
+            slot.dataset.blockId = "";
+            slot.textContent = "Пусто";
+            slot.classList.remove('filled', 'error-anim-primary', 'error-anim-secondary', 'success-anim');
+            
+            renderBank();
+            checkAllFilled();
+            if(navigator.vibrate) navigator.vibrate(20);
+            return;
+          }
+
+          if (selectedBlockId === null) return;
+
+          const blockObj = bankBlocks.find(b => b.id === selectedBlockId);
+          slot.textContent = blockObj.text;
+          slot.dataset.filled = "true";
+          slot.dataset.blockId = blockObj.id;
+          slot.classList.add('filled');
+          
+          bankBlocks = bankBlocks.filter(b => b.id !== selectedBlockId);
+          selectedBlockId = null;
+          
+          slots.forEach(s => s.classList.remove('highlight'));
+          renderBank();
+          checkAllFilled();
+          if(navigator.vibrate) navigator.vibrate(20);
+        });
+      });
+    }
+
+    // --- ВАЛИДАЦИЯ И ФИПИ-ОШИБКИ ---
+    document.getElementById('btn-check').addEventListener('click', () => {
+      const task = currentTaskPool[currentTaskIndex];
+      const slots = document.querySelectorAll('.slot');
+      const slotsContainer = document.getElementById('slots-container');
+      const fipiErrorBox = document.getElementById('fipi-error');
+      const fipiErrorText = document.getElementById('fipi-error-text');
+      
+      let errorSlots = []; 
+      let primaryErrorBlock = null;
+
+      slots.forEach((slot) => {
+        const blockId = slot.dataset.blockId;
+        const blockObj = task.blocks.find(b => b.id === blockId);
+        
+        if (!blockObj.isCorrect || blockObj.slot !== slot.dataset.slotId) {
+          errorSlots.push({ slot, blockObj });
+        }
+      });
+
+      if (errorSlots.length > 0) {
+        slots.forEach(s => s.classList.remove('error-anim-primary', 'error-anim-secondary', 'success-anim'));
+        void slotsContainer.offsetWidth; // Trigger reflow
+
+        primaryErrorBlock = errorSlots[0].blockObj;
+        errorSlots[0].slot.classList.add('error-anim-primary');
+
+        for (let i = 1; i < errorSlots.length; i++) {
+          errorSlots[i].slot.classList.add('error-anim-secondary');
+        }
+        
+        fipiErrorText.textContent = primaryErrorBlock.error || "Логическая или грамматическая ошибка в структуре аргумента/примера.";
+        fipiErrorBox.classList.add('active');
+
+        if(navigator.vibrate) navigator.vibrate([50, 100]);
+      } else {
+        slots.forEach(s => {
+           s.classList.remove('error-anim-primary', 'error-anim-secondary');
+           s.classList.add('success-anim');
+        });
+        playSuccessSound();
+        if(navigator.vibrate) navigator.vibrate(30);
+        
+        fipiErrorBox.classList.remove('active');
+        document.getElementById('check-area').classList.remove('active');
+        document.getElementById('bank-items').style.display = 'none';
+        document.getElementById('victory-msg').style.display = 'flex';
+
+        const progressFill = document.getElementById('progress-fill');
+        const progress = ((currentTaskIndex + 1) / currentTaskPool.length) * 100;
+        progressFill.style.width = progress + '%';
+      }
+    });
+
+    // Навигация
+    document.getElementById('btn-next-victory').addEventListener('click', () => {
+      currentTaskIndex = (currentTaskIndex + 1) % currentTaskPool.length;
+      loadTask(currentTaskIndex);
+    });
+    document.getElementById('btn-skip').addEventListener('click', () => {
+      initAudio();
+      currentTaskIndex = (currentTaskIndex + 1) % currentTaskPool.length;
+      loadTask(currentTaskIndex);
+    });
+    document.getElementById('btn-prev').addEventListener('click', () => {
+      initAudio();
+      currentTaskIndex = (currentTaskIndex - 1 + currentTaskPool.length) % currentTaskPool.length;
+      loadTask(currentTaskIndex);
+    });
+
+    // --- СИСТЕМНЫЕ ФУНКЦИИ ---
+    const htmlEl = document.documentElement;
+    function requestFullScreenSafe() {
+      try {
+        if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+          if (htmlEl.requestFullscreen) {
+            const req = htmlEl.requestFullscreen();
+            if (req && typeof req.catch === 'function') req.catch(() => {});
+          } else if (htmlEl.webkitRequestFullscreen) {
+            htmlEl.webkitRequestFullscreen(); 
+          }
+        }
+      } catch (e) { console.warn("Fullscreen API не поддерживается:", e); }
+    }
+
+    document.getElementById('btn-fullscreen').addEventListener('click', () => {
+      try {
+        if (!document.fullscreenElement && !document.webkitFullscreenElement) requestFullScreenSafe();
+        else {
+          if (document.exitFullscreen) document.exitFullscreen();
+          else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        }
+      } catch (e) {}
+    });
+
+    const updateFullscreenIcon = () => {
+      const isFull = document.fullscreenElement || document.webkitFullscreenElement;
+      document.getElementById('icon-fullscreen-use').setAttribute('href', isFull ? '#icon-minimize' : '#icon-maximize');
+    };
+    document.addEventListener('fullscreenchange', updateFullscreenIcon);
+    document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
+
+    document.getElementById('btn-theme').addEventListener('click', () => {
+      currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+      htmlEl.setAttribute('data-theme', currentTheme);
+      document.getElementById('icon-theme-use').setAttribute('href', currentTheme === 'light' ? '#icon-moon' : '#icon-sun');
+    });
+
+    document.getElementById('btn-start').addEventListener('click', () => {
+      try { initAudio(); requestFullScreenSafe(); } catch (e) {}
+      const splashScreen = document.getElementById('splash-screen');
+      splashScreen.classList.add('hidden');
+      setTimeout(() => {
+        splashScreen.style.display = 'none';
+        document.getElementById('app-ui').classList.add('visible');
+        loadTask(currentTaskIndex);
+      }, 500);
+    });
+
+  </script>
+</body>
+</html>
